@@ -1,0 +1,192 @@
+@use "colors" as *;
+
+// Product Categories Section (matching design UI)
+.agro-categories-section {
+    padding: 24px 0 32px;
+    width: 100%;
+
+    .agro-categories-heading {
+        margin-bottom: 20px;
+        text-align: left;
+
+        .agro-categories-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: $text-dark;
+            margin: 0 0 6px;
+            letter-spacing: -0.02em;
+        }
+
+        .agro-categories-subtitle {
+            font-size: 13.5px;
+            color: $text-muted;
+            margin: 0;
+        }
+    }
+
+    // Grid Track
+    .agro-categories-track {
+        display: grid;
+        grid-template-columns: repeat(var(--agro-cat-cols, 8), minmax(0, 1fr));
+        gap: 16px;
+        align-items: stretch;
+    }
+
+    // Category Card
+    .agro-category-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-color: #FFFBEB;
+        border: 1px solid #fef08a; // Warm delicate golden border
+        border-radius: 18px;
+        padding: 24px 12px 20px;
+        text-decoration: none !important;
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+            box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+            border-color 0.28s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+            border-color: #fde047;
+            box-shadow: 0 10px 22px -4px rgba(245, 158, 11, 0.16), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+
+            .agro-category-thumb-wrap .agro-category-img {
+                transform: scale(1.08);
+            }
+
+            .agro-category-name {
+                color: $primary-color;
+            }
+        }
+
+        // Circular Image Container with golden ring
+        .agro-category-thumb-wrap {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 2.5px solid #f59e0b; // Gold/amber circular border
+            overflow: hidden;
+            margin-bottom: 14px;
+            background-color: #fffbeb;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            position: relative;
+
+            .agro-category-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 50%;
+                display: block;
+                transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+        }
+
+        // Category Name
+        .agro-category-name {
+            font-size: 14.5px;
+            font-weight: 800;
+            color: $text-dark;
+            margin: 0 0 4px;
+            line-height: 1.25;
+            letter-spacing: -0.01em;
+            transition: color 0.2s ease;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        // Item Count
+        .agro-category-count {
+            font-size: 12px;
+            font-weight: 500;
+            color: #9ca3af;
+            line-height: 1.2;
+            display: block;
+        }
+    }
+}
+
+// Responsive Breakpoints
+@media (max-width: 1399px) {
+    .agro-categories-section {
+        .agro-categories-track {
+            gap: 12px;
+        }
+
+        .agro-category-card {
+            padding: 20px 8px 16px;
+
+            .agro-category-thumb-wrap {
+                width: 86px;
+                height: 86px;
+                margin-bottom: 12px;
+            }
+
+            .agro-category-name {
+                font-size: 13.5px;
+            }
+        }
+    }
+}
+
+@media (max-width: 1023px) {
+    .agro-categories-section {
+        .agro-categories-track {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+    }
+}
+
+@media (max-width: 640px) {
+    .agro-categories-section {
+        padding: 16px 0 24px;
+
+        .agro-categories-track {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 12px;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; // Firefox
+
+            &::-webkit-scrollbar {
+                display: none; // Chrome, Safari
+            }
+        }
+
+        .agro-category-card {
+            flex: 0 0 120px;
+            scroll-snap-align: start;
+            padding: 16px 8px 14px;
+            border-radius: 16px;
+
+            .agro-category-thumb-wrap {
+                width: 80px;
+                height: 80px;
+                border-width: 2px;
+                margin-bottom: 10px;
+            }
+
+            .agro-category-name {
+                font-size: 13px;
+            }
+
+            .agro-category-count {
+                font-size: 11.5px;
+            }
+        }
+    }
+}

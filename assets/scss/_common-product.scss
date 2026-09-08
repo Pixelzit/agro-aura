@@ -1,0 +1,553 @@
+@use "colors" as *;
+
+// 1. Shared Product Badges & Tags
+.agro-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    line-height: 1;
+
+    &.badge-collection {
+        background-color: #ffedd5;
+        color: #9a3412;
+    }
+
+    &.badge-sku {
+        background-color: #f3f4f6;
+        color: #4b5563;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+    }
+
+    &.badge-discount {
+        background-color: #f5a623;
+        color: #111827;
+        font-weight: 800;
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    &.badge-value {
+        background-color: $accent-dot;
+        color: #111827;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 3px 8px;
+        border-radius: 4px;
+    }
+
+    &.badge-savings {
+        background-color: #f3f4f6;
+        color: #4b5563;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
+    }
+}
+
+// 2. Shared Price Typography
+.agro-price-wrap {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+
+    .current-price {
+        font-size: 18px;
+        font-weight: 800;
+        color: $text-dark;
+    }
+
+    .regular-price,
+    del {
+        font-size: 14px;
+        color: #9ca3af;
+        text-decoration: line-through;
+        font-weight: 400;
+    }
+
+    .unit-price {
+        font-size: 12px;
+        font-weight: 600;
+        color: $primary-color;
+    }
+}
+
+// 3. Shared Quantity Input Stepper
+.agro-quantity-stepper {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    height: 48px;
+    padding: 0 4px;
+    user-select: none;
+
+    .qty-btn {
+        width: 38px;
+        height: 38px;
+        background: transparent !important;
+        border: none !important;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: $text-dark;
+        border-radius: 6px;
+        padding: 0 !important;
+        margin: 0 !important;
+        transition: background-color 0.15s ease;
+
+        &:hover {
+            background-color: #e5e7eb !important;
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+
+    .qty-input,
+    input[type="number"] {
+        width: 44px !important;
+        height: 100% !important;
+        border: none !important;
+        background: transparent !important;
+        text-align: center !important;
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        color: $text-dark !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        outline: none !important;
+        -moz-appearance: textfield;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+}
+
+// 4. Shared Action Buttons
+.btn-agro-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: $primary-color !important;
+    color: #ffffff !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    height: 48px !important;
+    padding: 0 24px !important;
+    border-radius: 8px !important;
+    border: none !important;
+    cursor: pointer;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 8px rgba(200, 35, 51, 0.25) !important;
+
+    svg {
+        stroke: #ffffff;
+        fill: none;
+        flex-shrink: 0;
+    }
+
+    &:hover {
+        background-color: #b01c2b !important;
+        box-shadow: 0 4px 12px rgba(200, 35, 51, 0.35) !important;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.btn-agro-buy-now {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: #f59e0b !important;
+    color: #ffffff !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    height: 48px !important;
+    padding: 0 20px !important;
+    border-radius: 8px !important;
+    border: none !important;
+    cursor: pointer;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25) !important;
+
+    svg {
+        fill: currentColor;
+        stroke: none;
+        flex-shrink: 0;
+    }
+
+    &:hover {
+        background-color: #d97706 !important;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35) !important;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+// ==========================================
+// 5. Shared Product Cards & Loops (Common across Shop, Category, Related, Best Sellers)
+// ==========================================
+ul.products {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 20px !important;
+    margin: 0 0 40px 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+
+    &::before,
+    &::after {
+        display: none !important;
+    }
+
+    li.product,
+    .agro-product-card-item {
+        float: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 12px !important; // Inset card padding
+        background-color: #ffffff;
+        border: 1px solid #f0f0f0;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+            .card-image-wrap img {
+                transform: scale(1.04);
+            }
+        }
+
+        // Hide default Storefront elements
+        > a:first-child {
+            display: none !important;
+        }
+        .onsale {
+            display: none !important;
+        }
+        .price {
+            display: none !important;
+        }
+        .star-rating {
+            display: none !important;
+        }
+        .woocommerce-loop-product__title {
+            display: none !important;
+        }
+
+        // Custom Card Image Container (Inset with rounded corners)
+        .card-image-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 0.94;
+            overflow: hidden;
+            background-color: #fafafa;
+            border-radius: 12px;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                border-radius: 12px;
+                transition: transform 0.35s ease;
+            }
+
+            // Discount Pill (Top-Left)
+            .badge-discount {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                z-index: 2;
+                background-color: #f5a623;
+                color: #111827;
+                font-size: 11px;
+                font-weight: 800;
+                padding: 4px 8px;
+                border-radius: 4px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+                letter-spacing: 0.3px;
+                line-height: 1;
+            }
+
+            // Rating Pill (if present)
+            .badge-rating {
+                display: none !important; // Clean image matching close-up screenshot
+            }
+        }
+
+        // Custom Card Body
+        .card-content-wrap {
+            padding: 14px 4px 4px 4px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+
+            // USP / Terroir Tag
+            .card-usp-tag {
+                font-size: 11px;
+                font-weight: 800;
+                color: #15803d;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 6px;
+                line-height: 1.2;
+            }
+
+            // Product Title Link
+            .card-title-link {
+                text-decoration: none;
+                color: $text-dark;
+                margin-bottom: 6px;
+
+                .card-title {
+                    font-size: 17px;
+                    font-weight: 800;
+                    color: $text-dark;
+                    line-height: 1.25;
+                    margin: 0;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    transition: color 0.15s ease;
+                }
+
+                &:hover .card-title {
+                    color: $primary-color;
+                }
+            }
+
+            // Short Description
+            .card-short-desc {
+                font-size: 12.5px;
+                color: #6b7280;
+                line-height: 1.45;
+                margin-bottom: 12px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                height: 36px;
+            }
+
+            // Pack Size Pills Row
+            .card-pack-pills {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 14px;
+                flex-wrap: wrap;
+
+                .pack-pill {
+                    font-size: 12px;
+                    font-weight: 700;
+                    padding: 4px 10px;
+                    border-radius: 4px;
+                    background-color: #f3f4f6;
+                    color: #111827;
+                    border: none;
+                    cursor: pointer;
+                    user-select: none;
+                    transition: all 0.15s ease;
+                    line-height: 1.2;
+
+                    &:hover {
+                        background-color: #e5e7eb;
+                    }
+
+                    &.is-selected {
+                        background-color: #fee2e2 !important;
+                        color: #991b1b !important;
+                        font-weight: 800 !important;
+                    }
+                }
+            }
+
+            // Bottom Pricing & Action Row
+            .card-bottom-row {
+                margin-top: auto;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                padding-top: 14px;
+                border-top: 1px solid #f3f4f6;
+
+                .card-price-col {
+                    display: flex;
+                    flex-direction: column;
+
+                    .price-numbers {
+                        display: flex;
+                        align-items: baseline;
+                        gap: 6px;
+
+                        .current-price {
+                            font-size: 21px;
+                            font-weight: 800;
+                            color: $text-dark;
+                            line-height: 1;
+                        }
+
+                        .regular-price {
+                            font-size: 13.5px;
+                            color: #9ca3af;
+                            text-decoration: line-through;
+                            font-weight: 500;
+                        }
+                    }
+
+                    .savings-text {
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: #15803d;
+                        line-height: 1.2;
+                        margin-top: 4px;
+                    }
+                }
+
+                // "+ Add" Button
+                .card-add-btn-wrap {
+                    .button.add_to_cart_button,
+                    .button.product_type_simple,
+                    .button.product_type_variable {
+                        background-color: #a30021 !important;
+                        color: #ffffff !important;
+                        font-size: 14px !important;
+                        font-weight: 700 !important;
+                        padding: 8px 20px !important;
+                        border-radius: 6px !important;
+                        border: none !important;
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        gap: 4px !important;
+                        text-decoration: none !important;
+                        cursor: pointer;
+                        transition: all 0.2s ease !important;
+                        margin: 0 !important;
+                        line-height: 1.4 !important;
+                        box-shadow: none !important;
+
+                        &::before {
+                            content: "+ ";
+                            font-size: 15px;
+                            font-weight: 800;
+                        }
+
+                        &:hover {
+                            background-color: #85001a !important;
+                            transform: translateY(-1px);
+                        }
+
+                        &.loading {
+                            opacity: 0.7;
+                        }
+
+                        &.added::after {
+                            margin-left: 4px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    @media (max-width: 1024px) {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 16px !important;
+    }
+
+    @media (max-width: 640px) {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+
+        li.product,
+        .agro-product-card-item {
+            padding: 8px !important;
+
+            .card-content-wrap {
+                padding: 10px 2px 2px 2px;
+
+                .card-title-link .card-title {
+                    font-size: 14.5px;
+                }
+
+                .card-usp-tag {
+                    font-size: 9.5px;
+                }
+
+                .card-short-desc {
+                    display: none;
+                }
+
+                .card-pack-pills {
+                    gap: 4px;
+                    margin-bottom: 10px;
+
+                    .pack-pill {
+                        font-size: 10.5px;
+                        padding: 3px 7px;
+                    }
+                }
+
+                .card-bottom-row {
+                    padding-top: 10px;
+
+                    .card-price-col .price-numbers .current-price {
+                        font-size: 16px;
+                    }
+
+                    .card-price-col .price-numbers .regular-price {
+                        font-size: 11.5px;
+                    }
+
+                    .card-price-col .savings-text {
+                        font-size: 10px;
+                    }
+
+                    .card-add-btn-wrap .button.add_to_cart_button {
+                        padding: 6px 12px !important;
+                        font-size: 12px !important;
+                    }
+                }
+            }
+        }
+    }
+}
+

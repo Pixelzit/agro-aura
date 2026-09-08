@@ -1,0 +1,263 @@
+@use "colors" as *;
+
+// Home Product Category List Section
+.agro-home-cat-list-section {
+    padding: 24px 0 44px;
+    width: 100%;
+
+    .agro-cat-list-header {
+        margin-bottom: 22px;
+        text-align: left;
+
+        .agro-cat-list-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: $text-dark;
+            margin: 0 0 6px;
+            letter-spacing: -0.02em;
+        }
+
+        .agro-cat-list-subtitle {
+            font-size: 14px;
+            color: $text-muted;
+            margin: 0;
+        }
+    }
+
+    // Filter Tabs Container
+    .agro-cat-tabs-wrapper {
+        margin-bottom: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    // Pill Capsule Group
+    .agro-cat-tabs-pill-group {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px;
+        background-color: #ffffff;
+        border: 1.5px solid #fef08a; // Soft golden border matching reference
+        border-radius: 9999px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; // Firefox
+
+        &::-webkit-scrollbar {
+            display: none; // Chrome, Safari
+        }
+    }
+
+    // Individual Tab Button
+    .agro-cat-tab-btn {
+        border: none;
+        outline: none;
+        background: transparent;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: #4b5563;
+        padding: 8px 22px;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+        white-space: nowrap;
+        user-select: none;
+        line-height: 1.3;
+        text-decoration: none;
+
+        &:hover:not(.active) {
+            color: #111827;
+            background-color: #fefce8;
+        }
+
+        &.active {
+            background-color: $primary-color; // Crimson Red #c82333
+            color: #ffffff;
+            font-weight: 700;
+            box-shadow: 0 3px 10px rgba(200, 35, 51, 0.28);
+        }
+    }
+
+    // Product Grid Container
+    .agro-cat-products-wrapper {
+        width: 100%;
+        position: relative;
+        min-height: 280px;
+
+        &.is-loading {
+            ul.products.agro-cat-products-grid {
+                opacity: 0.35;
+                pointer-events: none;
+            }
+
+            .agro-cat-loader-spinner {
+                display: block;
+            }
+        }
+    }
+
+    // Spinner
+    .agro-cat-loader-spinner {
+        display: none;
+        position: absolute;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        width: 44px;
+        height: 44px;
+        border: 3.5px solid #fef08a;
+        border-top-color: $primary-color;
+        border-radius: 50%;
+        animation: agroSpin 0.7s linear infinite;
+    }
+
+    ul.products.agro-cat-products-grid {
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 20px !important;
+        clear: both !important;
+        transition: opacity 0.2s ease;
+
+        &::before,
+        &::after {
+            display: none !important;
+        }
+
+        >li.product,
+        >li.agro-product-card-item {
+            list-style: none !important;
+            margin: 0 !important;
+            padding: 12 !important;
+            width: 100% !important;
+            float: none !important;
+            display: flex;
+            flex-direction: column;
+            animation: agroFadeIn 0.3s ease-out;
+
+            .agro-common-product-card {
+                height: 100%;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        li.agro-no-products {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            color: $text-muted;
+            font-size: 15px;
+            list-style: none !important;
+        }
+    }
+
+    // View More Button Wrap
+    .agro-cat-view-more-wrap {
+        margin-top: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .agro-view-more-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 36px;
+            background-color: #ffffff;
+            color: $primary-color;
+            border: 1.5px solid $primary-color;
+            border-radius: 9999px;
+            font-size: 14.5px;
+            font-weight: 700;
+            text-decoration: none !important;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            cursor: pointer;
+
+            .btn-arrow {
+                transition: transform 0.22s ease;
+            }
+
+            &:hover {
+                background-color: $primary-color;
+                color: #ffffff;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 18px rgba(200, 35, 51, 0.25);
+
+                .btn-arrow {
+                    transform: translateX(4px);
+                }
+            }
+        }
+    }
+}
+
+// Fade in animation for tab switching
+@keyframes agroFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes agroSpin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+// Responsive Breakpoints
+@media (max-width: 1024px) {
+    .agro-home-cat-list-section {
+        ul.products.agro-cat-products-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 16px !important;
+        }
+    }
+}
+
+@media (max-width: 640px) {
+    .agro-home-cat-list-section {
+        padding: 18px 0 32px;
+
+        .agro-cat-tabs-wrapper {
+            margin-bottom: 20px;
+        }
+
+        .agro-cat-tabs-pill-group {
+            width: 100%;
+            padding: 4px;
+        }
+
+        .agro-cat-tab-btn {
+            font-size: 13px;
+            padding: 7px 14px;
+        }
+
+        ul.products.agro-cat-products-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+        }
+
+        .agro-cat-view-more-wrap .agro-view-more-btn {
+            width: 100%;
+            padding: 11px 24px;
+        }
+    }
+}

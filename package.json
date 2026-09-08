@@ -1,0 +1,12 @@
+{
+  "name": "storefront-child",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "sass --watch assets/scss:assets/css --style=compressed",
+    "build": "sass assets/scss:assets/css --style=compressed"
+  },
+  "devDependencies": {
+    "sass": "^1.77.8"
+  }
+}

@@ -1,0 +1,526 @@
+@use "colors" as *;
+
+// All styles in this file strictly target only the Single Product Page
+body.single-product {
+
+    // Main layout container & cleanup
+    #primary.content-area {
+        float: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding-top: 20px;
+    }
+
+    #secondary.widget-area {
+        display: none !important; // clean full-width single product presentation
+    }
+
+    div.product {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        gap: 48px;
+        align-items: start;
+        margin-bottom: 40px;
+    }
+
+    .agro-single-product-wrap {
+
+        &:before,
+        &:after {
+            display: none !important;
+        }
+
+        > :not(.agro-gallery-column):not(.woocommerce-product-gallery):not(.agro-product-summary) {
+            grid-column: 1 / -1 !important;
+            width: 100% !important;
+        }
+    }
+
+    // Left Column Container
+    .agro-gallery-column {
+        position: relative !important;
+        width: 100% !important;
+
+        // Offer / Discount Badge placed directly over the image (matching reference design)
+        .onsale,
+        .agro-discount-badge {
+            position: absolute !important;
+            top: 16px !important;
+            left: 16px !important;
+            z-index: 15 !important;
+            background-color: #f5a623 !important;
+            color: #111827 !important;
+            font-size: 13px !important;
+            font-weight: 800 !important;
+            padding: 6px 14px !important;
+            border-radius: 8px !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+            letter-spacing: 0.3px !important;
+            min-height: auto !important;
+            min-width: auto !important;
+            line-height: 1.2 !important;
+            border: none !important;
+            margin: 0 !important;
+            display: inline-block !important;
+            pointer-events: none !important; // Lets hover interactions pass directly to the zoom image underneath
+            user-select: none !important;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+    }
+
+    // 1. Left Column: Native WooCommerce Gallery & Images (Slider & Zoom)
+    .woocommerce-product-gallery {
+        float: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        position: relative !important;
+
+        .woocommerce-product-gallery__wrapper {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            background-color: #fafafa;
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin: 0 !important;
+            padding: 0 !important;
+
+            .woocommerce-product-gallery__image {
+                position: relative !important;
+                border-radius: 16px;
+                overflow: hidden;
+
+                a {
+                    display: block;
+                    width: 100%;
+                    cursor: zoom-in;
+                }
+
+                img:not(.zoomImg) {
+                    width: 100% !important;
+                    height: auto !important;
+                    display: block !important;
+                    object-fit: cover;
+                    border-radius: 16px;
+                }
+
+                img.zoomImg {
+                    position: absolute !important;
+                    cursor: crosshair !important;
+                    border-radius: 16px;
+                    width: auto !important;
+                    height: auto !important;
+                    max-width: none !important;
+                    max-height: none !important;
+                    pointer-events: none !important;
+                    transition: opacity 0.2s ease !important;
+                }
+            }
+        }
+
+        // Native FlexSlider Thumbnails Strip
+        ol.flex-control-nav.flex-control-thumbs {
+            display: flex !important;
+            align-items: center;
+            gap: 12px;
+            margin: 16px 0 0 0 !important;
+            padding: 0 0 4px 0 !important;
+            overflow-x: auto;
+            list-style: none !important;
+
+            li {
+                width: 72px !important;
+                height: 72px !important;
+                border-radius: 10px;
+                overflow: hidden;
+                border: 2px solid transparent;
+                cursor: pointer;
+                flex-shrink: 0;
+                background-color: #fafafa;
+                transition: all 0.2s ease;
+                float: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+
+                img {
+                    width: 100% !important;
+                    height: 100% !important;
+                    object-fit: cover !important;
+                    display: block !important;
+                    border-radius: 8px;
+                    opacity: 0.8;
+                    transition: opacity 0.2s ease;
+
+                    &.flex-active {
+                        opacity: 1 !important;
+                    }
+                }
+
+                &:hover {
+                    border-color: #d1d5db;
+
+                    img {
+                        opacity: 1 !important;
+                    }
+                }
+
+                &:has(img.flex-active),
+                &.is-active {
+                    border-color: $primary-color !important;
+                    box-shadow: 0 2px 8px rgba(200, 35, 51, 0.25);
+
+                    img {
+                        opacity: 1 !important;
+                    }
+                }
+            }
+        }
+
+        // Zoomed image layer
+        img.zoomImg {
+            cursor: crosshair !important;
+            border-radius: 16px;
+        }
+
+        // Lightbox trigger button
+        .woocommerce-product-gallery__trigger {
+            position: absolute !important;
+            top: 16px !important;
+            right: 16px !important;
+            z-index: 9 !important;
+            background: #ffffff !important;
+            border-radius: 50% !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+            width: 36px !important;
+            height: 36px !important;
+            text-align: center !important;
+            line-height: 36px !important;
+            color: #4b5563 !important;
+            text-indent: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: none !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+            &:before {
+                font-size: 16px !important;
+                line-height: 1 !important;
+            }
+
+            &:hover {
+                transform: scale(1.08);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18) !important;
+            }
+        }
+    }
+
+
+    // 2. Right Column: Product Summary
+    .summary.entry-summary {
+        float: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+
+        // Collection & SKU Badges
+        .agro-product-meta-tags {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        // Product Title
+        .product_title {
+            font-size: 34px !important;
+            font-weight: 800 !important;
+            color: $text-dark !important;
+            line-height: 1.18 !important;
+            margin: 0 0 14px 0 !important;
+            letter-spacing: -0.5px !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+        }
+
+        // Subtitle / Description
+        .woocommerce-product-details__short-description {
+            margin: 0 0 24px 0 !important;
+
+            p {
+                font-size: 15px !important;
+                line-height: 1.6 !important;
+                color: #4b5563 !important;
+                margin: 0 !important;
+            }
+        }
+
+        // Hide standard default WooCommerce price if pack selector displays it
+        >p.price {
+            display: none;
+        }
+
+        // 3. Pack Size Selector
+        .agro-pack-size-section {
+            margin-bottom: 26px;
+
+            .pack-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 12px;
+
+                .pack-label {
+                    font-size: 14px;
+                    font-weight: 700;
+                    color: $text-dark;
+                }
+
+                .weight-guide-link {
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #b45309;
+                    text-decoration: none;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 5px;
+                    transition: color 0.15s ease;
+
+                    svg {
+                        width: 15px;
+                        height: 15px;
+                        stroke: #b45309;
+                    }
+
+                    &:hover {
+                        color: #92400e;
+                        text-decoration: underline;
+                    }
+                }
+            }
+
+            .pack-cards-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 14px;
+                max-width: 450px;
+
+                .pack-card {
+                    position: relative;
+                    border: 1.5px solid #e5e7eb;
+                    border-radius: 8px;
+                    padding: 14px 12px;
+                    background-color: #ffffff;
+                    cursor: pointer;
+                    user-select: none;
+                    transition: all 0.2s ease;
+
+                    .pack-card-badge {
+                        position: absolute;
+                        top: -10px;
+                        left: 10px;
+                    }
+
+                    .pack-weight {
+                        font-size: 15px;
+                        font-weight: 700;
+                        color: $text-dark;
+                        margin-bottom: 4px;
+                        transition: color 0.15s ease;
+                    }
+
+                    .pack-prices {
+                        display: flex;
+                        align-items: baseline;
+                        gap: 6px;
+                        margin-bottom: 4px;
+
+                        .current {
+                            font-size: 14px;
+                            font-weight: 700;
+                            color: $text-dark;
+                        }
+
+                        .original {
+                            font-size: 12px;
+                            color: #9ca3af;
+                            text-decoration: line-through;
+                        }
+                    }
+
+                    .pack-unit-price {
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: $primary-color;
+                    }
+
+                    &:hover {
+                        border-color: #cbd5e1;
+                    }
+
+                    &.is-selected {
+                        border-color: $primary-color;
+                        border-width: 1px;
+                        box-shadow: 0 4px 14px rgba(200, 35, 51, 0.12);
+
+                        .pack-weight {
+                            color: $primary-color;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 4. Action Bar (Quantity + Add to Cart + 1-Click Buy)
+        form.cart {
+            margin-bottom: 28px !important;
+            display: block !important;
+
+            .agro-action-row {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                flex-wrap: wrap;
+
+                .agro-quantity-stepper {
+                    flex-shrink: 0;
+                }
+
+                .btn-agro-primary {
+                    flex: 1.5;
+                    min-width: 190px;
+                }
+
+                .btn-agro-buy-now {
+                    flex: 1;
+                    min-width: 140px;
+                }
+            }
+
+            // Hide standard single_add_to_cart_button if custom button is used
+            .single_add_to_cart_button:not(.btn-agro-primary) {
+                display: none !important;
+            }
+        }
+
+        // 5. Value Proposition Highlights (Feature Cards Grid)
+        .agro-feature-highlights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+
+            .feature-card {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 14px 16px;
+                background-color: #ffffff;
+                border: 1px solid #f0f0f0;
+                border-radius: 8px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+                .feature-icon {
+                    width: 38px;
+                    height: 38px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+
+                    &.icon-aged {
+                        background-color: #fef3c7;
+                    }
+
+                    &.icon-polish {
+                        background-color: #dcfce7;
+                    }
+
+                    &.icon-aroma {
+                        background-color: #fee2e2;
+                    }
+
+                    svg {
+                        width: 19px;
+                        height: 19px;
+                    }
+                }
+
+
+                .feature-text {
+                    display: flex;
+                    flex-direction: column;
+
+                    .feature-title {
+                        font-size: 13px;
+                        font-weight: 700;
+                        color: $text-dark;
+                        line-height: 1.2;
+                    }
+
+                    .feature-subtitle {
+                        font-size: 11.5px;
+                        color: #6b7280;
+                        line-height: 1.2;
+                        margin-top: 2px;
+                    }
+                }
+
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+                }
+            }
+        }
+    }
+
+    // 6. Responsive Rules
+    @media (max-width: 1023px) {
+        div.product {
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+
+        .summary.entry-summary {
+            .product_title {
+                font-size: 28px !important;
+            }
+
+            .agro-pack-size-section .pack-cards-grid {
+                gap: 10px;
+            }
+        }
+    }
+
+    @media (max-width: 640px) {
+        .summary.entry-summary {
+            .product_title {
+                font-size: 24px !important;
+            }
+
+            .agro-pack-size-section .pack-cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            form.cart .agro-action-row {
+                flex-direction: column;
+                align-items: stretch;
+
+                .agro-quantity-stepper {
+                    justify-content: center;
+                    width: 100%;
+                }
+
+                .btn-agro-primary,
+                .btn-agro-buy-now {
+                    width: 100%;
+                }
+            }
+
+            .agro-feature-highlights {
+                grid-template-columns: 1fr;
+            }
+        }
+    }
+}

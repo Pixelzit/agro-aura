@@ -1,0 +1,534 @@
+@use "colors" as *;
+
+// All styles in this file target only the Shop and Archive Product Pages
+body.archive.woocommerce,
+body.post-type-archive-product,
+body.tax-product_cat,
+body.tax-product_tag {
+
+    .site {
+        overflow: visible;
+    }
+
+    // Main layout cleanup
+    #primary.content-area {
+        float: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding-top: 20px;
+    }
+
+    #secondary.widget-area {
+        display: none !important; // Replaced by our custom Refine Shelf sidebar
+    }
+
+    // Two-column layout: Sidebar (Refine Shelf) + Products Content
+    .agro-shop-layout {
+        display: grid;
+        grid-template-columns: 270px minmax(0, 1fr);
+        gap: 36px;
+        align-items: start;
+        margin-bottom: 50px;
+    }
+
+    // ==========================================
+    // 1. LEFT COLUMN: REFINE SHELF (SIDEBAR)
+    // ==========================================
+    .agro-shop-sidebar {
+        background-color: #ffffff;
+        border-radius: 12px;
+        padding: 0;
+        position: sticky;
+        top: 20px;
+
+        .refine-shelf-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+
+            .refine-title {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 16px;
+                font-weight: 800;
+                color: $text-dark;
+                letter-spacing: -0.2px;
+
+                svg {
+                    width: 18px;
+                    height: 18px;
+                    stroke: $primary-color;
+                }
+            }
+
+            .reset-all-btn {
+                font-size: 12px;
+                font-weight: 700;
+                color: $primary-color;
+                background: none;
+                border: none;
+                padding: 0;
+                cursor: pointer;
+                text-decoration: none;
+                transition: opacity 0.15s ease;
+
+                &:hover {
+                    opacity: 0.8;
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        .filter-group {
+            margin-bottom: 24px;
+
+            .filter-heading {
+                font-size: 11px;
+                font-weight: 800;
+                color: #6b7280;
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+                margin-bottom: 14px;
+            }
+        }
+
+        // Category Filter List
+        .category-filter-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+
+            li {
+                margin-bottom: 4px;
+
+                a {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    color: #374151;
+                    text-decoration: none;
+                    font-size: 13.5px;
+                    font-weight: 500;
+                    transition: all 0.15s ease;
+
+                    .cat-name {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+
+                    .cat-count {
+                        font-size: 12px;
+                        color: #9ca3af;
+                        font-weight: 600;
+                    }
+
+                    &:hover {
+                        background-color: #f9fafb;
+                        color: $text-dark;
+                    }
+                }
+
+                &.is-active a {
+                    background-color: #fee2e2;
+                    color: $primary-color;
+                    font-weight: 700;
+
+                    .cat-name::before {
+                        content: "";
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        background-color: $primary-color;
+                        display: inline-block;
+                    }
+
+                    .cat-count {
+                        color: $primary-color;
+                        font-weight: 800;
+                    }
+                }
+            }
+        }
+
+        // Custom Checkbox List (Price & Dietary)
+        .filter-checkbox-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+
+            li {
+                margin-bottom: 10px;
+
+                label {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    font-size: 13.5px;
+                    color: #374151;
+                    cursor: pointer;
+                    user-select: none;
+                    font-weight: 500;
+
+                    .checkbox-label-text {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+
+                    input[type="checkbox"] {
+                        appearance: none;
+                        width: 17px;
+                        height: 17px;
+                        border: 1.5px solid #d1d5db;
+                        border-radius: 4px;
+                        outline: none;
+                        cursor: pointer;
+                        margin: 0;
+                        position: relative;
+                        background-color: #ffffff;
+                        transition: all 0.15s ease;
+
+                        &:checked {
+                            background-color: $primary-color;
+                            border-color: $primary-color;
+
+                            &::after {
+                                content: "";
+                                position: absolute;
+                                left: 5px;
+                                top: 2px;
+                                width: 4px;
+                                height: 8px;
+                                border: solid #ffffff;
+                                border-width: 0 2px 2px 0;
+                                transform: rotate(45deg);
+                            }
+                        }
+
+                        &:hover {
+                            border-color: $primary-color;
+                        }
+                    }
+
+                    .item-count {
+                        font-size: 12px;
+                        color: #9ca3af;
+                        font-weight: 600;
+                    }
+
+                    &:hover {
+                        color: $text-dark;
+                    }
+                }
+            }
+        }
+
+        // Pack Size Pills Filter
+        .pack-size-filter-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            .pack-pill-btn {
+                background-color: #f3f4f6;
+                color: #374151;
+                border: 1px solid #e5e7eb;
+                border-radius: 6px;
+                padding: 5px 12px;
+                font-size: 12px;
+                font-weight: 700;
+                cursor: pointer;
+                user-select: none;
+                transition: all 0.15s ease;
+
+                &:hover {
+                    border-color: #cbd5e1;
+                    background-color: #e5e7eb;
+                }
+
+                &.is-active {
+                    background-color: $primary-color;
+                    color: #ffffff;
+                    border-color: $primary-color;
+                    box-shadow: 0 2px 6px rgba(200, 35, 51, 0.25);
+                }
+            }
+        }
+
+        // Agro Aura Promise Card
+        .agro-promise-card {
+            background-color: #f2f8f5;
+            border: 1px solid #dcf0e7;
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 30px;
+
+            .promise-header {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+
+                svg {
+                    width: 17px;
+                    height: 17px;
+                    stroke: #15803d;
+                    fill: none;
+                    stroke-width: 2;
+                }
+
+                span {
+                    font-size: 11.5px;
+                    font-weight: 800;
+                    color: #15803d;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+            }
+
+            p {
+                font-size: 12px;
+                line-height: 1.5;
+                color: #4b5563;
+                margin: 0;
+            }
+        }
+    }
+
+    // ==========================================
+    // 2. RIGHT COLUMN: MAIN SHOP AREA
+    // ==========================================
+    .agro-shop-main-content {
+        min-width: 0;
+
+        ul.products {
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 20px !important;
+
+            @media (max-width: 1280px) and (min-width: 1025px) {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+        }
+
+        // Top Control Bar
+        .agro-shop-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 14px;
+
+            .shop-result-count {
+                font-size: 13.5px;
+                color: #6b7280;
+                font-weight: 500;
+                margin: 0;
+
+                strong {
+                    color: $text-dark;
+                    font-weight: 700;
+                }
+            }
+
+            .agro-top-right-controls {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                flex-wrap: wrap;
+            }
+
+            // Active Filter Chips
+            .agro-active-filters {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+
+                .filter-chip {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    background-color: #f3f4f6;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 6px;
+                    padding: 4px 10px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: #374151;
+
+                    .remove-chip-btn {
+                        background: none;
+                        border: none;
+                        padding: 0;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #6b7280;
+                        font-size: 14px;
+                        line-height: 1;
+
+                        &:hover {
+                            color: $primary-color;
+                        }
+                    }
+                }
+            }
+
+            // Sort Dropdown
+            .agro-catalog-ordering {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 0;
+
+                .sort-label {
+                    font-size: 11.5px;
+                    font-weight: 800;
+                    color: #6b7280;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                form.woocommerce-ordering {
+                    margin: 0 !important;
+                    float: none !important;
+
+                    select.orderby {
+                        border: 1px solid #e5e7eb;
+                        border-radius: 6px;
+                        background-color: #ffffff;
+                        padding: 6px 30px 6px 12px;
+                        font-size: 13px;
+                        font-weight: 600;
+                        color: $text-dark;
+                        cursor: pointer;
+                        appearance: none;
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+                        background-repeat: no-repeat;
+                        background-position: right 10px center;
+                        outline: none;
+
+                        &:hover,
+                        &:focus {
+                            border-color: #cbd5e1;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Product grid is globally provided by _common-product.scss
+
+
+        // Storefront bottom sorting bar cleanup
+        .storefront-sorting {
+            margin-top: 30px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            &::before,
+            &::after {
+                display: none !important;
+            }
+
+            // Hide duplicate ordering form and result count from bottom
+            .woocommerce-ordering {
+                display: none !important;
+            }
+
+            .woocommerce-result-count {
+                display: none !important;
+            }
+
+            nav.woocommerce-pagination {
+                margin: 0 !important;
+                float: none !important;
+            }
+        }
+
+        // Pagination styling
+        nav.woocommerce-pagination {
+            margin-top: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+
+            ul.page-numbers {
+                border: none !important;
+                display: inline-flex;
+                gap: 6px;
+                padding: 0;
+
+                li {
+                    border: none !important;
+
+                    .page-numbers {
+                        padding: 8px 14px;
+                        border-radius: 6px;
+                        font-weight: 600;
+                        font-size: 13.5px;
+                        border: 1px solid #e5e7eb;
+                        color: #374151;
+
+                        &.current {
+                            background-color: $primary-color;
+                            color: #ffffff;
+                            border-color: $primary-color;
+                        }
+
+                        &:hover:not(.current) {
+                            background-color: #f9fafb;
+                            border-color: #cbd5e1;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    // ==========================================
+    // 4. RESPONSIVE MEDIA QUERIES
+    // ==========================================
+    @media (max-width: 1024px) {
+        .agro-shop-layout {
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .agro-shop-sidebar {
+            position: static;
+            border: 1px solid #f0f0f0;
+            padding: 20px;
+        }
+
+        .agro-shop-main-content ul.products {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 16px !important;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .agro-shop-main-content {
+            .agro-shop-top-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            ul.products {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+.site-container {
+    width: 100%;
+    max-width: 1720px;
+    padding-inline: 60px;
+    margin-inline: auto;
+    display: flow-root;
+
+    @media (max-width: 1023px) {
+        padding-inline: 20px;
+    }
+
+    @media (max-width: 640px) {
+        padding-inline: 14px;
+    }
+}
+
+// Lock scroll when drawer is open
+body.drawer-open {
+    overflow: hidden !important;
+    touch-action: none;
+}
