@@ -254,18 +254,22 @@ ul.products {
         }
 
         // Hide default Storefront elements
-        > a:first-child {
+        >a:first-child {
             display: none !important;
         }
+
         .onsale {
             display: none !important;
         }
+
         .price {
             display: none !important;
         }
+
         .star-rating {
             display: none !important;
         }
+
         .woocommerce-loop-product__title {
             display: none !important;
         }
@@ -313,10 +317,11 @@ ul.products {
 
         // Custom Card Body
         .card-content-wrap {
-            padding: 14px 4px 4px 4px;
+            padding: 12px 4px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
+            text-align: left;
 
             // USP / Terroir Tag
             .card-usp-tag {
@@ -336,7 +341,7 @@ ul.products {
                 margin-bottom: 6px;
 
                 .card-title {
-                    font-size: 17px;
+                    font-size: 18px;
                     font-weight: 800;
                     color: $text-dark;
                     line-height: 1.25;
@@ -442,6 +447,7 @@ ul.products {
 
                 // "+ Add" Button
                 .card-add-btn-wrap {
+
                     .button.add_to_cart_button,
                     .button.product_type_simple,
                     .button.product_type_variable {
@@ -550,4 +556,3 @@ ul.products {
         }
     }
 }
-

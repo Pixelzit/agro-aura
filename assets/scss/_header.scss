@@ -133,6 +133,10 @@
         align-items: center !important;
         width: 100% !important;
         margin: 0 !important;
+
+        &:before {
+            display: none;
+        }
     }
 
     input[type="search"].search-field {
