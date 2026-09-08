@@ -122,6 +122,15 @@ add_filter( 'woocommerce_sale_flash', 'agro_aura_custom_sale_flash', 20, 3 );
 
 
 
+/**
+ * Allow SVG upload in Media Library
+ */
+function agro_aura_allow_svg_upload( $mimes ) {
+	$mimes['svg'] = 'image/svg+xml';
+	return $mimes;
+}
+add_filter( 'upload_mimes', 'agro_aura_allow_svg_upload' );
+
 
 /**
 * Adjust header hooks to prevent duplicate branding, search, and cart.
