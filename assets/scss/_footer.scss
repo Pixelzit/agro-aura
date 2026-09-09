@@ -160,7 +160,7 @@
 .footer-widget-1 {
     .widget_media_image {
         img {
-            filter: brightness(100);
+            filter: invert(1) brightness(100);
         }
     }
 }

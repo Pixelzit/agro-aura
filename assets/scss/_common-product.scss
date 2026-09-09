@@ -534,20 +534,25 @@ ul.products {
 
                 .card-bottom-row {
                     padding-top: 10px;
+                    flex-wrap: wrap;
 
-                    .card-price-col .price-numbers .current-price {
-                        font-size: 16px;
+                    .card-price-col {
+                        .price-numbers {
+                            .current-price {
+                                font-size: 16px;
+                            }
+
+                            .regular-price {
+                                font-size: 11.5px;
+                            }
+
+                            .savings-text {
+                                font-size: 10px;
+                            }
+                        }
                     }
 
-                    .card-price-col .price-numbers .regular-price {
-                        font-size: 11.5px;
-                    }
-
-                    .card-price-col .savings-text {
-                        font-size: 10px;
-                    }
-
-                    .card-add-btn-wrap .button.add_to_cart_button {
+                    .card-price-col .price-numbers .card-price-col .card-add-btn-wrap .button.add_to_cart_button {
                         padding: 6px 12px !important;
                         font-size: 12px !important;
                     }
