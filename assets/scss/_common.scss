@@ -20,9 +20,17 @@
 }
 
 // Lock scroll when drawer is open
-body.drawer-open {
-    overflow: hidden !important;
-    touch-action: none;
+body {
+    &.drawer-open {
+        overflow: hidden !important;
+        touch-action: none;
+    }
+
+    &.page-template-default {
+        .wp-block-woocommerce-cart {
+            margin-inline: 0 !important;
+        }
+    }
 }
 
 #page a:focus {
