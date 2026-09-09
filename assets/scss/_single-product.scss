@@ -166,7 +166,7 @@ body.single-product {
 
                 &:has(img.flex-active),
                 &.is-active {
-                    border-color: $primary-color !important;
+                    border-color: var(--primary-color) !important;
                     box-shadow: 0 2px 8px rgba(200, 35, 51, 0.25);
 
                     img {
@@ -235,7 +235,7 @@ body.single-product {
         .product_title {
             font-size: 34px !important;
             font-weight: 800 !important;
-            color: $text-dark !important;
+            color: var(--text-dark) !important;
             line-height: 1.18 !important;
             margin: 0 0 14px 0 !important;
             letter-spacing: -0.5px !important;
@@ -272,7 +272,7 @@ body.single-product {
                 .pack-label {
                     font-size: 14px;
                     font-weight: 700;
-                    color: $text-dark;
+                    color: var(--text-dark);
                 }
 
                 .weight-guide-link {
@@ -323,7 +323,7 @@ body.single-product {
                     .pack-weight {
                         font-size: 15px;
                         font-weight: 700;
-                        color: $text-dark;
+                        color: var(--text-dark);
                         margin-bottom: 4px;
                         transition: color 0.15s ease;
                     }
@@ -337,7 +337,7 @@ body.single-product {
                         .current {
                             font-size: 14px;
                             font-weight: 700;
-                            color: $text-dark;
+                            color: var(--text-dark);
                         }
 
                         .original {
@@ -350,7 +350,7 @@ body.single-product {
                     .pack-unit-price {
                         font-size: 12px;
                         font-weight: 700;
-                        color: $primary-color;
+                        color: var(--primary-color);
                     }
 
                     &:hover {
@@ -358,12 +358,12 @@ body.single-product {
                     }
 
                     &.is-selected {
-                        border-color: $primary-color;
+                        border-color: var(--primary-color);
                         border-width: 1px;
                         box-shadow: 0 4px 14px rgba(200, 35, 51, 0.12);
 
                         .pack-weight {
-                            color: $primary-color;
+                            color: var(--primary-color);
                         }
                     }
                 }
@@ -455,7 +455,7 @@ body.single-product {
                     .feature-title {
                         font-size: 13px;
                         font-weight: 700;
-                        color: $text-dark;
+                        color: var(--text-dark);
                         line-height: 1.2;
                     }
 
@@ -476,7 +476,7 @@ body.single-product {
     }
 
     // 6. Responsive Rules
-    @media (max-width: 1023px) {
+    @media (max-width: 1024px) {
         div.product {
             grid-template-columns: 1fr;
             gap: 32px;
@@ -493,7 +493,7 @@ body.single-product {
         }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 767px) {
         .summary.entry-summary {
             .product_title {
                 font-size: 24px !important;

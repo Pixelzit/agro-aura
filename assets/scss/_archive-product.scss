@@ -55,20 +55,20 @@ body.tax-product_tag {
                 gap: 8px;
                 font-size: 16px;
                 font-weight: 800;
-                color: $text-dark;
+                color: var(--text-dark);
                 letter-spacing: -0.2px;
 
                 svg {
                     width: 18px;
                     height: 18px;
-                    stroke: $primary-color;
+                    stroke: var(--primary-color);
                 }
             }
 
             .reset-all-btn {
                 font-size: 12px;
                 font-weight: 700;
-                color: $primary-color;
+                color: var(--primary-color);
                 background: none;
                 border: none;
                 padding: 0;
@@ -78,7 +78,6 @@ body.tax-product_tag {
 
                 &:hover {
                     opacity: 0.8;
-                    text-decoration: underline;
                 }
             }
         }
@@ -96,14 +95,14 @@ body.tax-product_tag {
             }
         }
 
-        // Category Filter List
-        .category-filter-list {
+        // Category Vertical Tree
+        .filter-category-tree {
             list-style: none;
             margin: 0;
             padding: 0;
 
             li {
-                margin-bottom: 4px;
+                margin-bottom: 6px;
 
                 a {
                     display: flex;
@@ -111,9 +110,9 @@ body.tax-product_tag {
                     justify-content: space-between;
                     padding: 8px 12px;
                     border-radius: 6px;
-                    color: #374151;
                     text-decoration: none;
-                    font-size: 13.5px;
+                    color: #4b5563;
+                    font-size: 14px;
                     font-weight: 500;
                     transition: all 0.15s ease;
 
@@ -131,13 +130,13 @@ body.tax-product_tag {
 
                     &:hover {
                         background-color: #f9fafb;
-                        color: $text-dark;
+                        color: var(--text-dark);
                     }
                 }
 
                 &.is-active a {
                     background-color: #fee2e2;
-                    color: $primary-color;
+                    color: var(--primary-color);
                     font-weight: 700;
 
                     .cat-name::before {
@@ -145,12 +144,12 @@ body.tax-product_tag {
                         width: 7px;
                         height: 7px;
                         border-radius: 50%;
-                        background-color: $primary-color;
+                        background-color: var(--primary-color);
                         display: inline-block;
                     }
 
                     .cat-count {
-                        color: $primary-color;
+                        color: var(--primary-color);
                         font-weight: 800;
                     }
                 }
@@ -196,8 +195,8 @@ body.tax-product_tag {
                         transition: all 0.15s ease;
 
                         &:checked {
-                            background-color: $primary-color;
-                            border-color: $primary-color;
+                            background-color: var(--primary-color);
+                            border-color: var(--primary-color);
 
                             &::after {
                                 content: "";
@@ -213,7 +212,7 @@ body.tax-product_tag {
                         }
 
                         &:hover {
-                            border-color: $primary-color;
+                            border-color: var(--primary-color);
                         }
                     }
 
@@ -224,7 +223,7 @@ body.tax-product_tag {
                     }
 
                     &:hover {
-                        color: $text-dark;
+                        color: var(--text-dark);
                     }
                 }
             }
@@ -254,9 +253,9 @@ body.tax-product_tag {
                 }
 
                 &.is-active {
-                    background-color: $primary-color;
+                    background-color: var(--primary-color);
                     color: #ffffff;
-                    border-color: $primary-color;
+                    border-color: var(--primary-color);
                     box-shadow: 0 2px 6px rgba(200, 35, 51, 0.25);
                 }
             }
@@ -333,7 +332,7 @@ body.tax-product_tag {
                 margin: 0;
 
                 strong {
-                    color: $text-dark;
+                    color: var(--text-dark);
                     font-weight: 700;
                 }
             }
@@ -377,7 +376,7 @@ body.tax-product_tag {
                         line-height: 1;
 
                         &:hover {
-                            color: $primary-color;
+                            color: var(--primary-color);
                         }
                     }
                 }
@@ -409,7 +408,7 @@ body.tax-product_tag {
                         padding: 6px 30px 6px 12px;
                         font-size: 13px;
                         font-weight: 600;
-                        color: $text-dark;
+                        color: var(--text-dark);
                         cursor: pointer;
                         appearance: none;
                         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -481,9 +480,9 @@ body.tax-product_tag {
                         color: #374151;
 
                         &.current {
-                            background-color: $primary-color;
+                            background-color: var(--primary-color);
                             color: #ffffff;
-                            border-color: $primary-color;
+                            border-color: var(--primary-color);
                         }
 
                         &:hover:not(.current) {
@@ -518,7 +517,7 @@ body.tax-product_tag {
         }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 767px) {
         .agro-shop-main-content {
             .agro-shop-top-bar {
                 flex-direction: column;

@@ -29,20 +29,20 @@
             gap: 8px;
             font-size: 16px;
             font-weight: 800;
-            color: $text-dark;
+            color: var(--text-dark);
             letter-spacing: -0.2px;
 
             svg {
                 width: 18px;
                 height: 18px;
-                stroke: $primary-color;
+                stroke: var(--primary-color);
             }
         }
 
         .reset-all-btn {
             font-size: 12px;
             font-weight: 700;
-            color: $primary-color;
+            color: var(--primary-color);
             background: none;
             border: none;
             padding: 0;
@@ -105,13 +105,13 @@
 
                 &:hover {
                     background-color: #f9fafb;
-                    color: $text-dark;
+                    color: var(--text-dark);
                 }
             }
 
             &.is-active a {
                 background-color: #fee2e2;
-                color: $primary-color;
+                color: var(--primary-color);
                 font-weight: 700;
 
                 .cat-name::before {
@@ -119,12 +119,12 @@
                     width: 7px;
                     height: 7px;
                     border-radius: 50%;
-                    background-color: $primary-color;
+                    background-color: var(--primary-color);
                     display: inline-block;
                 }
 
                 .cat-count {
-                    color: $primary-color;
+                    color: var(--primary-color);
                     font-weight: 800;
                 }
             }
@@ -171,8 +171,8 @@
                     transition: all 0.15s ease;
 
                     &:checked {
-                        background-color: $primary-color;
-                        border-color: $primary-color;
+                        background-color: var(--primary-color);
+                        border-color: var(--primary-color);
 
                         &::after {
                             content: "";
@@ -188,7 +188,7 @@
                     }
 
                     &:hover {
-                        border-color: $primary-color;
+                        border-color: var(--primary-color);
                     }
                 }
 
@@ -199,7 +199,7 @@
                 }
 
                 &:hover {
-                    color: $text-dark;
+                    color: var(--text-dark);
                 }
             }
         }
@@ -229,9 +229,9 @@
             }
 
             &.is-active {
-                background-color: $primary-color;
+                background-color: var(--primary-color);
                 color: #ffffff;
-                border-color: $primary-color;
+                border-color: var(--primary-color);
                 box-shadow: 0 2px 6px rgba(200, 35, 51, 0.25);
             }
         }
@@ -310,7 +310,7 @@
         width: 44px;
         height: 44px;
         border: 3.5px solid #fef08a;
-        border-top-color: $primary-color;
+        border-top-color: var(--primary-color);
         border-radius: 50%;
         animation: agroShopSpin 0.7s linear infinite;
     }
@@ -341,7 +341,7 @@
         h3 {
             font-size: 18px;
             font-weight: 700;
-            color: $text-dark;
+            color: var(--text-dark);
             margin: 0 0 8px;
         }
 
@@ -352,7 +352,7 @@
         }
 
         .agro-clear-filters-btn {
-            background-color: $primary-color;
+            background-color: var(--primary-color);
             color: #ffffff;
             border: none;
             border-radius: 20px;
@@ -363,7 +363,7 @@
             transition: all 0.15s ease;
 
             &:hover {
-                background-color: $primary-hover;
+                background-color: var(--primary-hover);
                 transform: translateY(-1px);
             }
         }

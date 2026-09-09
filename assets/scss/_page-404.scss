@@ -1,0 +1,239 @@
+// ==========================================
+// 404 PAGE NOT FOUND STYLES
+// ==========================================
+
+.error-404 {
+
+    .page-content {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    // Hero Card
+    .agro-404-hero {
+        max-width: 740px;
+        margin: 0 auto 60px;
+        text-align: center;
+        padding: 44px 28px;
+        background: var(--white-color, #ffffff);
+        border-radius: 20px;
+        border: 1px solid var(--border-light, #f0f0f0);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+
+        .agro-404-number {
+            font-size: clamp(84px, 12vw, 130px);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -4px;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            text-shadow: 0 4px 18px rgba(200, 35, 51, 0.15);
+            user-select: none;
+        }
+
+        .page-header.agro-404-header {
+            margin: 0 0 16px;
+            padding: 0;
+            border: none;
+
+            .page-title {
+                font-size: clamp(24px, 4vw, 32px);
+                font-weight: 800;
+                color: var(--text-dark);
+                line-height: 1.25;
+                margin: 0 0 12px;
+                letter-spacing: -0.5px;
+            }
+
+            .page-subtitle {
+                font-size: 15px;
+                line-height: 1.6;
+                color: var(--text-muted);
+                max-width: 540px;
+                margin: 0 auto;
+            }
+        }
+
+        // Search Section
+        .agro-404-search-section {
+            margin-top: 32px;
+            width: 100%;
+
+            .agro-404-search-form {
+                max-width: 580px;
+                margin: 0 auto;
+
+                .search-field-wrap {
+                    display: flex;
+                    align-items: center;
+                    background-color: var(--search-bg, #f3f4f6);
+                    border: 1.5px solid transparent;
+                    border-radius: 50px;
+                    padding: 5px 6px 5px 18px;
+                    transition: all 0.2s ease;
+
+                    &:focus-within {
+                        background-color: var(--white-color, #ffffff);
+                        border-color: var(--primary-color);
+                        box-shadow: 0 0 0 4px rgba(200, 35, 51, 0.12);
+                    }
+
+                    .search-icon {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #9ca3af;
+                        margin-right: 12px;
+                        flex-shrink: 0;
+
+                        svg {
+                            display: block;
+                        }
+                    }
+
+                    .search-field {
+                        flex: 1;
+                        height: 44px;
+                        border: none !important;
+                        outline: none !important;
+                        background: transparent !important;
+                        box-shadow: none !important;
+                        font-size: 14.5px;
+                        color: var(--text-dark);
+                        padding: 0;
+
+                        &::placeholder {
+                            color: #8c9ba5;
+                            opacity: 1;
+                            font-size: 14px;
+                        }
+                    }
+
+                    .search-submit {
+                        height: 44px;
+                        padding: 0 28px;
+                        border: none !important;
+                        border-radius: 50px !important;
+                        background-color: var(--primary-color) !important;
+                        color: var(--white-color, #ffffff) !important;
+                        font-size: 14.5px !important;
+                        font-weight: 700 !important;
+                        cursor: pointer;
+                        flex-shrink: 0;
+                        transition: all 0.2s ease !important;
+
+                        &:hover {
+                            background-color: var(--primary-hover) !important;
+                            transform: translateY(-1px);
+                            box-shadow: 0 4px 12px rgba(200, 35, 51, 0.25);
+                        }
+                    }
+                }
+            }
+
+            // Quick Links
+            .agro-404-quick-links {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                margin-top: 24px;
+                flex-wrap: wrap;
+
+                a {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 10px 22px;
+                    border-radius: 50px;
+                    font-size: 13.5px;
+                    font-weight: 600;
+                    text-decoration: none !important;
+                    transition: all 0.2s ease;
+
+                    svg {
+                        display: block;
+                    }
+                }
+
+                .agro-btn-home {
+                    background-color: var(--text-dark);
+                    color: var(--white-color) !important;
+
+                    &:hover {
+                        background-color: #000000;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    }
+                }
+
+                .agro-btn-shop {
+                    background-color: var(--search-bg, #f3f4f6);
+                    color: var(--text-dark) !important;
+                    border: 1px solid #e5e7eb;
+
+                    &:hover {
+                        background-color: #e5e7eb;
+                        color: var(--primary-color) !important;
+                        transform: translateY(-2px);
+                    }
+                }
+            }
+        }
+    }
+
+    // Popular & Promoted Products sections below
+    .fourohfour-columns-2,
+    section[aria-label="Popular Products"] {
+        margin-top: 40px;
+
+        h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 24px;
+            letter-spacing: -0.3px;
+        }
+    }
+
+    // Responsive
+    @media (max-width: 767px) {
+        padding: 30px 0 50px;
+
+        .agro-404-hero {
+            padding: 30px 16px;
+            margin-bottom: 40px;
+            border-radius: 16px;
+
+            .agro-404-search-section {
+                .agro-404-search-form {
+                    .search-field-wrap {
+                        padding: 4px 4px 4px 14px;
+
+                        .search-field {
+                            font-size: 13.5px;
+                        }
+
+                        .search-submit {
+                            height: 40px;
+                            padding: 0 18px;
+                            font-size: 13.5px;
+                        }
+                    }
+                }
+
+                .agro-404-quick-links {
+                    flex-direction: column;
+                    width: 100%;
+
+                    a {
+                        width: 100%;
+                        justify-content: center;
+                        padding: 11px 20px;
+                    }
+                }
+            }
+        }
+    }
+}

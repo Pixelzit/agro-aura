@@ -1,10 +1,12 @@
 @use "colors";
+@use "breakpoints";
 @use "common";
 
 // header
 @use "header";
 
 // pages
+@use "page-404";
 
 
 // prduct pages

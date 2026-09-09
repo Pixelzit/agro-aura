@@ -12,14 +12,14 @@
         .agro-cat-list-title {
             font-size: 24px;
             font-weight: 800;
-            color: $text-dark;
+            color: var(--text-dark);
             margin: 0 0 6px;
             letter-spacing: -0.02em;
         }
 
         .agro-cat-list-subtitle {
             font-size: 14px;
-            color: $text-muted;
+            color: var(--text-muted);
             margin: 0;
         }
     }
@@ -76,7 +76,7 @@
         }
 
         &.active {
-            background-color: $primary-color; // Crimson Red #c82333
+            background-color: var(--primary-color); // Crimson Red #c82333
             color: #ffffff;
             font-weight: 700;
             box-shadow: 0 3px 10px rgba(200, 35, 51, 0.28);
@@ -112,7 +112,7 @@
         width: 44px;
         height: 44px;
         border: 3.5px solid #fef08a;
-        border-top-color: $primary-color;
+        border-top-color: var(--primary-color);
         border-radius: 50%;
         animation: agroSpin 0.7s linear infinite;
     }
@@ -154,7 +154,7 @@
             grid-column: 1 / -1;
             text-align: center;
             padding: 40px 20px;
-            color: $text-muted;
+            color: var(--text-muted);
             font-size: 15px;
             list-style: none !important;
         }
@@ -174,8 +174,8 @@
             gap: 8px;
             padding: 12px 36px;
             background-color: #ffffff;
-            color: $primary-color;
-            border: 1.5px solid $primary-color;
+            color: var(--primary-color);
+            border: 1.5px solid var(--primary-color);
             border-radius: 9999px;
             font-size: 14.5px;
             font-weight: 700;
@@ -189,7 +189,7 @@
             }
 
             &:hover {
-                background-color: $primary-color;
+                background-color: var(--primary-color);
                 color: #ffffff;
                 transform: translateY(-2px);
                 box-shadow: 0 6px 18px rgba(200, 35, 51, 0.25);
@@ -231,7 +231,7 @@
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 767px) {
     .agro-home-cat-list-section {
         padding: 18px 0 32px;
 

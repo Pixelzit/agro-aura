@@ -63,9 +63,20 @@ if ( ! function_exists( 'storefront_credit' ) ) {
 
 		$links_output = apply_filters( 'storefront_credit_links_output', $links_output );
 		?>
-		<div class="site-info">
-			<?php echo esc_html( apply_filters( 'storefront_copyright_text', $content = '&copy; ' . get_bloginfo( 'name' ) . ' ' . gmdate( 'Y' ) ) ); ?>.
-			All Rights Reserved.
+		<div class="site-info footer-copyright-wrap">
+
+			<div class="copyright-text">
+				<?php echo esc_html( apply_filters( 'storefront_copyright_text', $content = '&copy; ' . get_bloginfo( 'name' ) . ' ' . gmdate( 'Y' ) ) ); ?>. All Rights Reserved.
+			</div>
+
+			<div class="policies-links">
+				<ul>
+					<li><a href="/privacy-policy">Privacy Policy</a></li>
+					<li><a href="/terms-and-conditions">Terms & Conditions</a></li>
+					<li><a href="/return-exchange">Return & Exchange</a></li>
+				</ul>
+			</div>
+
 		</div><!-- .site-info -->
 		<?php
 	}
