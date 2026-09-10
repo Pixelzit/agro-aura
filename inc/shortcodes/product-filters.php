@@ -248,14 +248,18 @@ function agro_aura_ajax_filter_products() {
 	$category     = isset( $_POST['category'] ) ? sanitize_text_field( wp_unslash( $_POST['category'] ) ) : 'all';
 	$pack_size    = isset( $_POST['pack_size'] ) ? sanitize_text_field( wp_unslash( $_POST['pack_size'] ) ) : '';
 	$orderby      = isset( $_POST['orderby'] ) ? sanitize_text_field( wp_unslash( $_POST['orderby'] ) ) : 'menu_order';
+	$paged        = isset( $_POST['paged'] ) ? max( 1, intval( $_POST['paged'] ) ) : 1;
 	$price_ranges = isset( $_POST['price_ranges'] ) ? (array) $_POST['price_ranges'] : array();
 	$price_ranges = array_map( 'sanitize_text_field', $price_ranges );
+
+	$per_page = apply_filters( 'loop_shop_per_page', wc_get_default_products_per_row() * wc_get_default_product_rows_per_page() );
 
 	// Build WP_Query
 	$query_args = array(
 		'post_type'      => 'product',
 		'post_status'    => 'publish',
-		'posts_per_page' => apply_filters( 'loop_shop_per_page', wc_get_default_products_per_row() * wc_get_default_product_rows_per_page() ),
+		'posts_per_page' => $per_page,
+		'paged'          => $paged,
 	);
 
 	// 1. Orderby sorting
@@ -400,16 +404,46 @@ function agro_aura_ajax_filter_products() {
 	$html = ob_get_clean();
 
 	$total_found = $products_query->found_posts;
-	$showing_end = min( $total_found, $products_query->post_count );
+	$max_pages   = $products_query->max_num_pages;
+	$start       = ( $paged - 1 ) * $per_page + 1;
+	$end         = min( $paged * $per_page, $total_found );
+
 	if ( $total_found > 0 ) {
 		$result_count_text = sprintf(
 			/* translators: 1: start count, 2: end count, 3: total products */
-			__( 'Showing <strong>1–%1$s</strong> of <strong>%2$s</strong> fresh products', 'storefront-child' ),
-			esc_html( $showing_end ),
+			__( 'Showing <strong>%1$s–%2$s</strong> of <strong>%3$s</strong> fresh products', 'storefront-child' ),
+			esc_html( $start ),
+			esc_html( $end ),
 			esc_html( $total_found )
 		);
 	} else {
 		$result_count_text = __( 'Showing <strong>0</strong> fresh products', 'storefront-child' );
+	}
+
+	// Dynamic Pagination HTML
+	$pagination_html = '';
+	if ( $max_pages > 1 ) {
+		$pages = paginate_links(
+			array(
+				'base'      => '%_%',
+				'format'    => '?paged=%#%',
+				'current'   => $paged,
+				'total'     => $max_pages,
+				'prev_text' => '&larr;',
+				'next_text' => '&rarr;',
+				'type'      => 'array',
+				'end_size'  => 3,
+				'mid_size'  => 3,
+			)
+		);
+
+		if ( is_array( $pages ) && ! empty( $pages ) ) {
+			$pagination_html = '<div class="storefront-sorting"><nav class="woocommerce-pagination"><ul class="page-numbers">';
+			foreach ( $pages as $page ) {
+				$pagination_html .= '<li>' . $page . '</li>';
+			}
+			$pagination_html .= '</ul></nav></div>';
+		}
 	}
 
 	// Build active chips
@@ -453,6 +487,10 @@ function agro_aura_ajax_filter_products() {
 		$page_url = $shop_permalink;
 	}
 
+	if ( $paged > 1 ) {
+		$page_url = add_query_arg( 'paged', $paged, $page_url );
+	}
+
 	// Dynamic updated counts
 	$price_counts = agro_aura_get_price_range_counts( $category );
 	$pack_counts  = agro_aura_get_available_pack_sizes_with_counts( $category );
@@ -460,6 +498,9 @@ function agro_aura_ajax_filter_products() {
 	wp_send_json_success(
 		array(
 			'html'              => $html,
+			'pagination_html'   => $pagination_html,
+			'max_pages'         => $max_pages,
+			'current_page'      => $paged,
 			'found_posts'       => $total_found,
 			'result_count_text' => $result_count_text,
 			'chips'             => $chips,
@@ -616,7 +657,7 @@ function agro_aura_product_filters_shortcode( $atts ) {
 			</div>
 		<?php endif; ?>
 
-		<?php if ( 'false' !== strval( $atts['show_pack_size'] ) ) : ?>
+		<?php /*if ( 'false' !== strval( $atts['show_pack_size'] ) ) : ?>
 			<!-- Filter Group 3: Pack Size (Dynamic) -->
 			<div class="filter-group">
 				<div class="filter-heading"><?php esc_html_e( 'Pack Size', 'storefront-child' ); ?></div>
@@ -633,7 +674,7 @@ function agro_aura_product_filters_shortcode( $atts ) {
 					<?php endforeach; ?>
 				</div>
 			</div>
-		<?php endif; ?>
+		<?php endif;*/ ?>
 
 		<?php if ( 'false' !== strval( $atts['show_promise'] ) ) : ?>
 			<!-- Filter Group 4: Agro Aura Promise Card -->

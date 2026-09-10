@@ -24,6 +24,7 @@
         var selectedPriceRanges = [];
         var selectedPackSize = '';
         var currentOrderby = orderbySelect ? orderbySelect.value : 'menu_order';
+        var currentPage = 1;
 
         var activeController = null;
 
@@ -55,15 +56,34 @@
             if (orderbySelect) {
                 currentOrderby = orderbySelect.value;
             }
+
+            // 5. Initial Page from URL
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('paged')) {
+                currentPage = parseInt(urlParams.get('paged'), 10) || 1;
+            } else if (urlParams.has('product-page')) {
+                currentPage = parseInt(urlParams.get('product-page'), 10) || 1;
+            } else {
+                var pathMatch = window.location.pathname.match(/page\/([0-9]+)/i);
+                if (pathMatch && pathMatch[1]) {
+                    currentPage = parseInt(pathMatch[1], 10) || 1;
+                } else {
+                    currentPage = 1;
+                }
+            }
         }
 
         syncInitialState();
 
         // Core AJAX Filter Function
-        function executeFilter(updateUrl) {
+        function executeFilter(updateUrl, page) {
             if (!mainContent || !productsGrid) {
                 // If sidebar is outside shop layout, fallback to redirect
                 return;
+            }
+
+            if (typeof page !== 'undefined' && page !== null) {
+                currentPage = parseInt(page, 10) || 1;
             }
 
             // Abort previous pending request
@@ -81,6 +101,7 @@
             formData.append('category', activeCategory);
             formData.append('pack_size', selectedPackSize);
             formData.append('orderby', currentOrderby);
+            formData.append('paged', currentPage);
 
             for (var i = 0; i < selectedPriceRanges.length; i++) {
                 formData.append('price_ranges[]', selectedPriceRanges[i]);
@@ -108,22 +129,41 @@
                         resultCountEl.innerHTML = data.result_count_text;
                     }
 
-                    // 3. Update Active Chips
+                    // 3. Update Pagination
+                    var paginationWrap = document.getElementById('agro-shop-pagination');
+                    if (!paginationWrap && mainContent) {
+                        paginationWrap = mainContent.querySelector('.storefront-sorting');
+                    }
+                    if (!paginationWrap && mainContent) {
+                        paginationWrap = mainContent.querySelector('.woocommerce-pagination');
+                    }
+
+                    if (paginationWrap) {
+                        paginationWrap.innerHTML = data.pagination_html || '';
+                    } else if (data.pagination_html && productsGrid) {
+                        paginationWrap = document.createElement('div');
+                        paginationWrap.id = 'agro-shop-pagination';
+                        paginationWrap.className = 'agro-pagination-wrap';
+                        paginationWrap.innerHTML = data.pagination_html;
+                        productsGrid.parentNode.insertBefore(paginationWrap, productsGrid.nextSibling);
+                    }
+
+                    // 4. Update Active Chips
                     renderActiveChips(data.chips || []);
 
-                    // 4. Update Price Counts if returned
+                    // 5. Update Price Counts if returned
                     if (data.price_counts) {
                         updatePriceCountBadges(data.price_counts);
                     }
 
-                    // 5. Update Pack Counts if returned
+                    // 6. Update Pack Counts if returned
                     if (data.pack_counts) {
                         updatePackCountBadges(data.pack_counts);
                     }
 
-                    // 6. Update URL in browser history without reload
+                    // 7. Update URL in browser history without reload
                     if (updateUrl !== false && data.url) {
-                        window.history.pushState({ agroFilter: true }, '', data.url);
+                        window.history.pushState({ agroFilter: true, paged: currentPage }, '', data.url);
                     }
                 }
             })
@@ -208,7 +248,7 @@
                 catLink.closest('li').classList.add('is-active');
 
                 activeCategory = slug;
-                executeFilter(true);
+                executeFilter(true, 1);
             });
         }
 
@@ -220,7 +260,7 @@
                     sidebar.querySelectorAll('.filter-checkbox-list input[type="checkbox"]:checked').forEach(function (cb) {
                         selectedPriceRanges.push(cb.value);
                     });
-                    executeFilter(true);
+                    executeFilter(true, 1);
                 }
             });
         }
@@ -247,7 +287,7 @@
                     selectedPackSize = pack;
                 }
 
-                executeFilter(true);
+                executeFilter(true, 1);
             });
         }
 
@@ -255,7 +295,7 @@
         if (orderbySelect) {
             orderbySelect.addEventListener('change', function () {
                 currentOrderby = this.value;
-                executeFilter(true);
+                executeFilter(true, 1);
             });
             // Intercept form submission if inside a form
             var orderForm = orderbySelect.closest('form');
@@ -263,7 +303,7 @@
                 orderForm.addEventListener('submit', function (e) {
                     e.preventDefault();
                     currentOrderby = orderbySelect.value;
-                    executeFilter(true);
+                    executeFilter(true, 1);
                 });
             }
         }
@@ -305,7 +345,7 @@
                     }
                 }
 
-                executeFilter(true);
+                executeFilter(true, 1);
             });
         }
 
@@ -341,7 +381,7 @@
                 activeFiltersWrap.innerHTML = '';
             }
 
-            executeFilter(true);
+            executeFilter(true, 1);
         });
 
         // 7. Product Card Variation Pack Pill clicks (Event delegation for cards everywhere)
@@ -397,8 +437,13 @@
 
             // 4. Update Discount Badge on Image
             var discountBadge = card.querySelector('.badge-discount');
-            if (discountBadge && discount) {
-                discountBadge.textContent = discount + '% OFF';
+            if (discountBadge) {
+                if (discount && parseInt(discount, 10) > 0) {
+                    discountBadge.textContent = discount + '% OFF';
+                    discountBadge.style.display = '';
+                } else {
+                    discountBadge.style.display = 'none';
+                }
             }
 
             // 5. Update Add to Cart Button target
@@ -407,9 +452,56 @@
                 if (variationId) {
                     addBtn.dataset.productId = variationId;
                     addBtn.setAttribute('data-product_id', variationId);
+                    addBtn.href = '?add-to-cart=' + variationId;
                 }
                 addBtn.dataset.pack = packName;
                 addBtn.setAttribute('data-pack', packName);
+            }
+        });
+
+        // 8. Dynamic AJAX Pagination Click Handling
+        document.addEventListener('click', function (e) {
+            var pageLink = e.target.closest('#agro-shop-pagination a.page-numbers, .agro-shop-main-content .woocommerce-pagination a.page-numbers');
+            if (!pageLink) return;
+
+            e.preventDefault();
+
+            var href = pageLink.getAttribute('href') || '';
+            var targetPage = 1;
+
+            var pagedMatch = href.match(/[?&](?:paged|product-page)=([0-9]+)/i) || href.match(/page\/([0-9]+)/i);
+            if (pagedMatch && pagedMatch[1]) {
+                targetPage = parseInt(pagedMatch[1], 10);
+            } else {
+                var text = pageLink.textContent.trim();
+                if (/^\d+$/.test(text)) {
+                    targetPage = parseInt(text, 10);
+                } else if (pageLink.classList.contains('next')) {
+                    targetPage = currentPage + 1;
+                } else if (pageLink.classList.contains('prev')) {
+                    targetPage = Math.max(1, currentPage - 1);
+                }
+            }
+
+            if (targetPage && targetPage !== currentPage) {
+                executeFilter(true, targetPage);
+
+                // Smooth scroll to top of products grid
+                if (mainContent) {
+                    var targetOffset = mainContent.getBoundingClientRect().top + window.pageYOffset - 90;
+                    window.scrollTo({
+                        top: Math.max(0, targetOffset),
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+
+        // 9. Browser Back / Forward Button Handling
+        window.addEventListener('popstate', function (e) {
+            if (e.state && e.state.agroFilter) {
+                syncInitialState();
+                executeFilter(false, currentPage);
             }
         });
     });

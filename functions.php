@@ -97,7 +97,3 @@ require_once get_stylesheet_directory() . '/inc/woocommerce/custom-storefront-wo
 require_once get_stylesheet_directory() . '/inc/shortcodes/product-categories.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/home-product-cat-list.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/product-filters.php';
-
-
-
-

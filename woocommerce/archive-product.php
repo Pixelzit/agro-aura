@@ -29,7 +29,7 @@ do_action( 'woocommerce_before_main_content' );
 	<!-- 1. LEFT COLUMN: REFINE SHELF (SIDEBAR)     -->
 	<!-- ========================================== -->
 	<aside>
-		<?php //echo do_shortcode( '[agro_product_filters]' ); ?>
+		<?php echo do_shortcode( '[agro_product_filters]' ); ?>
 	</aside>
 
 
@@ -90,15 +90,17 @@ do_action( 'woocommerce_before_main_content' );
 				}
 				?>
 			</ul>
+			<div class="agro-pagination-wrap" id="agro-shop-pagination">
+				<?php
+				/**
+				 * Hook: woocommerce_after_shop_loop.
+				 *
+				 * @hooked woocommerce_pagination - 10
+				 */
+				do_action( 'woocommerce_after_shop_loop' );
+				?>
+			</div>
 		<?php
-
-			/**
-			 * Hook: woocommerce_after_shop_loop.
-			 *
-			 * @hooked woocommerce_pagination - 10
-			 */
-			do_action( 'woocommerce_after_shop_loop' );
-
 		} else {
 			/**
 			 * Hook: woocommerce_no_products_found.
@@ -106,6 +108,9 @@ do_action( 'woocommerce_before_main_content' );
 			 * @hooked wc_no_products_found - 10
 			 */
 			do_action( 'woocommerce_no_products_found' );
+			?>
+			<div class="agro-pagination-wrap" id="agro-shop-pagination"></div>
+			<?php
 		}
 		?>
 
