@@ -73,7 +73,7 @@ if ( ! function_exists( 'storefront_credit' ) ) {
 				<ul>
 					<li><a href="/privacy-policy">Privacy Policy</a></li>
 					<li><a href="/terms-and-conditions">Terms & Conditions</a></li>
-					<li><a href="/return-exchange">Return & Exchange</a></li>
+					<!-- <li><a href="/return-exchange">Return & Exchange</a></li> -->
 				</ul>
 			</div>
 

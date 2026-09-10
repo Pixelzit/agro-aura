@@ -413,8 +413,12 @@
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         border: 1px solid var(--border-light);
         border-radius: 8px;
-        padding: 16px;
         min-width: 280px;
+
+
+        @media screen and (min-width: 768px) {
+            background: #ffffff !important;
+        }
     }
 
     &:hover .widget_shopping_cart,

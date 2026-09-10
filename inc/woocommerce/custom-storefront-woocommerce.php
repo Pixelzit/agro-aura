@@ -83,3 +83,53 @@ function agro_aura_variable_loop_add_to_cart_link( $html, $product, $args ) {
 	return $html;
 }
 add_filter( 'woocommerce_loop_add_to_cart_link', 'agro_aura_variable_loop_add_to_cart_link', 20, 3 );
+
+/**
+ * Add modern quick-action shortcut cards to the My Account dashboard
+ */
+function agro_aura_account_dashboard_cards() {
+	$orders_url  = wc_get_account_endpoint_url( 'orders' );
+	$address_url = wc_get_account_endpoint_url( 'edit-address' );
+	$account_url = wc_get_account_endpoint_url( 'edit-account' );
+	$logout_url  = wc_logout_url();
+	?>
+	<div class="agro-dashboard-cards-grid">
+		<a href="<?php echo esc_url( $orders_url ); ?>" class="dashboard-card">
+			<div class="card-icon">
+				<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+			</div>
+			<h4 class="card-title"><?php esc_html_e( 'My Orders', 'storefront-child' ); ?></h4>
+			<p class="card-desc"><?php esc_html_e( 'View your recent orders and track their delivery status.', 'storefront-child' ); ?></p>
+			<span class="card-arrow"><?php esc_html_e( 'View Orders', 'storefront-child' ); ?></span>
+		</a>
+
+		<a href="<?php echo esc_url( $address_url ); ?>" class="dashboard-card">
+			<div class="card-icon">
+				<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+			</div>
+			<h4 class="card-title"><?php esc_html_e( 'Addresses', 'storefront-child' ); ?></h4>
+			<p class="card-desc"><?php esc_html_e( 'Manage your shipping and billing addresses.', 'storefront-child' ); ?></p>
+			<span class="card-arrow"><?php esc_html_e( 'Manage', 'storefront-child' ); ?></span>
+		</a>
+
+		<a href="<?php echo esc_url( $account_url ); ?>" class="dashboard-card">
+			<div class="card-icon">
+				<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+			</div>
+			<h4 class="card-title"><?php esc_html_e( 'Account Details', 'storefront-child' ); ?></h4>
+			<p class="card-desc"><?php esc_html_e( 'Update your name, email address and password.', 'storefront-child' ); ?></p>
+			<span class="card-arrow"><?php esc_html_e( 'Edit Profile', 'storefront-child' ); ?></span>
+		</a>
+
+		<a href="<?php echo esc_url( $logout_url ); ?>" class="dashboard-card">
+			<div class="card-icon">
+				<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+			</div>
+			<h4 class="card-title"><?php esc_html_e( 'Logout', 'storefront-child' ); ?></h4>
+			<p class="card-desc"><?php esc_html_e( 'Safely sign out of your account on this device.', 'storefront-child' ); ?></p>
+			<span class="card-arrow"><?php esc_html_e( 'Log Out', 'storefront-child' ); ?></span>
+		</a>
+	</div>
+	<?php
+}
+add_action( 'woocommerce_account_dashboard', 'agro_aura_account_dashboard_cards', 20 );
