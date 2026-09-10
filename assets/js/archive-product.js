@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (variationId) {
                 addBtn.dataset.productId = variationId;
                 addBtn.setAttribute('data-product_id', variationId);
+                addBtn.href = '?add-to-cart=' + variationId;
             }
             addBtn.dataset.pack = packName;
             addBtn.setAttribute('data-pack', packName);

@@ -15,30 +15,27 @@ if ( ! is_a( $product, WC_Product::class ) || ! $product->is_visible() ) {
 	return;
 }
 
-$title_lower = strtolower( $product->get_name() );
-
-// Terroir / USP Subtitle tag based on meta or product title/category
-$custom_usp = get_post_meta( $product->get_id(), '_usp_tag', true );
-if ( empty( $custom_usp ) ) {
-	$custom_usp = get_post_meta( $product->get_id(), 'usp_tag', true );
-}
-
-if ( ! empty( $custom_usp ) ) {
-	$usp_tag = $custom_usp;
-} else {
-	$usp_tag = 'NATURAL • 100% PURE';
-	if ( strpos( $title_lower, 'rice' ) !== false || strpos( $title_lower, 'basmati' ) !== false ) {
-		$usp_tag = 'AGED 2 YRS • HIMALAYAN TERROIR';
-	} elseif ( strpos( $title_lower, 'dal' ) !== false || strpos( $title_lower, 'toor' ) !== false || strpos( $title_lower, 'chana' ) !== false || strpos( $title_lower, 'moong' ) !== false ) {
-		$usp_tag = ( strpos( $title_lower, 'moong' ) !== false ) ? 'EASY TO DIGEST • WATER WASH ONLY' : 'ZERO OIL POLISH • DESI SEED';
-	} elseif ( strpos( $title_lower, 'oil' ) !== false || strpos( $title_lower, 'mustard' ) !== false ) {
-		$usp_tag = 'WOOD CHURNED (KOHLU)';
-	} elseif ( strpos( $title_lower, 'atta' ) !== false || strpos( $title_lower, 'wheat' ) !== false || strpos( $title_lower, 'flour' ) !== false ) {
-		$usp_tag = 'STONE CHAKKI FRESH • 100% BRAN';
-	} elseif ( strpos( $title_lower, 'haldi' ) !== false || strpos( $title_lower, 'tea' ) !== false || strpos( $title_lower, 'spice' ) !== false || strpos( $title_lower, 'kesar' ) !== false ) {
-		$usp_tag = ( strpos( $title_lower, 'tea' ) !== false ) ? 'ESTATE PICKED • ASSAM TERROIR' : 'HIGH CURCUMIN • AUTHENTIC AROMA';
+// Terroir / USP Subtitle tag dynamically from product meta (ACF or custom post meta)
+$usp_tag = '';
+if ( function_exists( 'get_field' ) ) {
+	$usp_tag = get_field( 'usp_tag', $product->get_id() );
+	if ( empty( $usp_tag ) ) {
+		$usp_tag = get_field( 'usp', $product->get_id() );
 	}
 }
+if ( empty( $usp_tag ) ) {
+	$usp_tag = get_post_meta( $product->get_id(), '_usp_tag', true );
+}
+if ( empty( $usp_tag ) ) {
+	$usp_tag = get_post_meta( $product->get_id(), 'usp_tag', true );
+}
+if ( empty( $usp_tag ) ) {
+	$usp_tag = get_post_meta( $product->get_id(), 'usp', true );
+}
+if ( empty( $usp_tag ) ) {
+	$usp_tag = get_post_meta( $product->get_id(), '_usp', true );
+}
+$usp_tag = trim( (string) $usp_tag );
 
 // Build pack size options & pricing dynamically
 $pack_options = array();
@@ -197,7 +194,9 @@ $cat_data_attr = implode( ' ', $product_cat_slugs );
 	<!-- Card Body -->
 	<div class="card-content-wrap">
 		<!-- Terroir / USP Subtitle Tag -->
-		<div class="card-usp-tag"><?php echo esc_html( $usp_tag ); ?></div>
+		<?php if ( ! empty( $usp_tag ) ) : ?>
+			<div class="card-usp-tag"><?php echo esc_html( $usp_tag ); ?></div>
+		<?php endif; ?>
 
 		<!-- Product Title -->
 		<a href="<?php echo esc_url( $product_permalink ); ?>" class="card-title-link">

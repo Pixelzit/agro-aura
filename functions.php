@@ -73,56 +73,6 @@ function storefront_child_enqueue_styles() {
 add_action( 'wp_enqueue_scripts', 'storefront_child_enqueue_styles', 20 );
 
 /**
- * Enable WooCommerce theme supports for gallery zoom, lightbox, and slider.
- */
-function agro_aura_theme_setup() {
-	add_theme_support( 'wc-product-gallery-zoom' );
-	add_theme_support( 'wc-product-gallery-lightbox' );
-	add_theme_support( 'wc-product-gallery-slider' );
-}
-add_action( 'after_setup_theme', 'agro_aura_theme_setup', 50 );
-
-/**
- * Handle 1-Click Buy button: redirect directly to checkout page
- */
-function agro_aura_buy_now_redirect( $url ) {
-	if ( isset( $_REQUEST['agro_buy_now'] ) && '1' === strval( $_REQUEST['agro_buy_now'] ) ) {
-		return wc_get_checkout_url();
-	}
-	return $url;
-}
-add_filter( 'woocommerce_add_to_cart_redirect', 'agro_aura_buy_now_redirect', 20, 1 );
-
-/**
- * Remove default single product sale flash so our custom offer badge over the image is used instead
- */
-function agro_aura_remove_single_product_sale_flash() {
-	if ( is_product() ) {
-		remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_sale_flash', 10 );
-	}
-}
-add_action( 'wp', 'agro_aura_remove_single_product_sale_flash', 20 );
-
-/**
- * Custom Sale Badge showing calculated discount percentage
- */
-function agro_aura_custom_sale_flash( $html, $post, $product ) {
-	if ( ! $product ) {
-		return $html;
-	}
-	$regular_price = (float) $product->get_regular_price();
-	$sale_price    = (float) $product->get_sale_price();
-	$percent       = 20;
-	if ( $regular_price > 0 && $sale_price > 0 ) {
-		$percent = round( ( ( $regular_price - $sale_price ) / $regular_price ) * 100 );
-	}
-	return '<span class="agro-discount-badge onsale">' . esc_html( $percent ) . '% OFF</span>';
-}
-add_filter( 'woocommerce_sale_flash', 'agro_aura_custom_sale_flash', 20, 3 );
-
-
-
-/**
  * Allow SVG upload in Media Library
  */
 function agro_aura_allow_svg_upload( $mimes ) {
@@ -131,12 +81,15 @@ function agro_aura_allow_svg_upload( $mimes ) {
 }
 add_filter( 'upload_mimes', 'agro_aura_allow_svg_upload' );
 
+/**
+ * Adjust header hooks to prevent duplicate branding, search, and cart.
+ */
+require_once get_stylesheet_directory() . '/inc/storefront-template-functions.php';
 
 /**
-* Adjust header hooks to prevent duplicate branding, search, and cart.
-*/
-require_once get_stylesheet_directory() . '/inc/storefront-template-functions.php';
-// require_once get_stylesheet_directory() . '/inc/woocommerce/storefront-template-functions.php';
+ * Custom WooCommerce hooks and template functions
+ */
+require_once get_stylesheet_directory() . '/inc/woocommerce/custom-storefront-woocommerce.php';
 
 /**
  * Custom Shortcodes
@@ -144,6 +97,7 @@ require_once get_stylesheet_directory() . '/inc/storefront-template-functions.ph
 require_once get_stylesheet_directory() . '/inc/shortcodes/product-categories.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/home-product-cat-list.php';
 require_once get_stylesheet_directory() . '/inc/shortcodes/product-filters.php';
+
 
 
 
