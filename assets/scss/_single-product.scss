@@ -103,18 +103,6 @@ body.single-product {
                     object-fit: cover;
                     border-radius: 16px;
                 }
-
-                img.zoomImg {
-                    position: absolute !important;
-                    cursor: crosshair !important;
-                    border-radius: 16px;
-                    width: auto !important;
-                    height: auto !important;
-                    max-width: none !important;
-                    max-height: none !important;
-                    pointer-events: none !important;
-                    transition: opacity 0.2s ease !important;
-                }
             }
         }
 
