@@ -231,7 +231,7 @@ if ( empty( $sku ) ) {
 		<div class="agro-pack-size-section">
 			<div class="pack-header">
 				<span class="pack-label">Select <?php echo esc_html( ! empty( $attribute_label ) ? $attribute_label : 'Pack Size' ); ?></span>
-				<a href="#weight-guide" class="weight-guide-link">
+				<!-- <a href="#weight-guide" class="weight-guide-link">
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"></path>
 						<path d="M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"></path>
@@ -240,7 +240,7 @@ if ( empty( $sku ) ) {
 						<path d="M3 7h18"></path>
 					</svg>
 					Weight Guide
-				</a>
+				</a> -->
 			</div>
 
 			<div class="pack-cards-grid">

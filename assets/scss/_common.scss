@@ -1,6 +1,19 @@
-.storefront-breadcrumb{
+.woocommerce-page {
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: "Montserrat", sans-serif;
+    }
+}
+
+.storefront-breadcrumb {
     background: #f1f1f1;
 }
+
 .site-container {
     width: 100%;
     max-width: 1720px;
