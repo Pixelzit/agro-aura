@@ -16,6 +16,7 @@
             li {
                 position: relative;
                 transition: margin-left .2s ease;
+                padding-left: 0;
 
                 &::before {
                     content: '';
@@ -25,6 +26,7 @@
                     background-color: var(--white-color);
                     opacity: 0.8;
                     top: 11px;
+                    display: none;
                 }
 
                 a {

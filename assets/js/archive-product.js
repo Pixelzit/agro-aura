@@ -56,8 +56,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 4. Update Discount Badge on Image
         const discountBadge = card.querySelector('.badge-discount');
-        if (discountBadge && discount) {
-            discountBadge.textContent = discount + '% OFF';
+        if (discountBadge) {
+            if (discount && parseInt(discount, 10) > 0) {
+                discountBadge.textContent = discount + '% OFF';
+                discountBadge.style.display = '';
+            } else {
+                discountBadge.style.display = 'none';
+            }
         }
 
         // 5. Update Add to Cart Button target

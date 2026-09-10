@@ -182,18 +182,9 @@ function agro_aura_get_product_pack_sizes( $product ) {
 		}
 	}
 
-	// 3. Fallback matching title & category (consistent with content-product.php)
-	if ( empty( $packs ) ) {
-		$title_lower = strtolower( $product->get_name() );
-		if ( strpos( $title_lower, 'rice' ) !== false || strpos( $title_lower, 'basmati' ) !== false ) {
-			$packs = array( '1kg', '5kg' );
-		} elseif ( strpos( $title_lower, 'oil' ) !== false || strpos( $title_lower, 'mustard' ) !== false ) {
-			$packs = array( '1 Litre', '5 Litre', '1L', '5L' );
-		} elseif ( strpos( $title_lower, 'atta' ) !== false || strpos( $title_lower, 'wheat' ) !== false || strpos( $title_lower, 'flour' ) !== false ) {
-			$packs = array( '5kg', '10kg' );
-		} else {
-			$packs = array( '500g', '1kg' );
-		}
+	// 3. Check product weight
+	if ( $product->has_weight() ) {
+		$packs[] = $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit', 'kg' );
 	}
 
 	return array_unique( $packs );
