@@ -4,7 +4,10 @@
 body.archive.woocommerce,
 body.post-type-archive-product,
 body.tax-product_cat,
-body.tax-product_tag {
+body.tax-product_tag,
+body.search.woocommerce,
+body.search.woocommerce-page,
+body.woocommerce-search-page {
 
     .site {
         overflow: visible;
@@ -29,6 +32,20 @@ body.tax-product_tag {
         gap: 36px;
         align-items: start;
         margin-bottom: 50px;
+
+        &.full-width,
+        &.agro-no-products-layout {
+            display: block !important;
+            grid-template-columns: 1fr !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin-bottom: 40px;
+
+            .agro-shop-main-content {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+        }
     }
 
     // ==========================================
@@ -488,6 +505,225 @@ body.tax-product_tag {
                         &:hover:not(.current) {
                             background-color: #f9fafb;
                             border-color: #cbd5e1;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Empty State: When no products are found
+        .agro-empty-shop-state {
+            width: 100%;
+            padding: 30px 0 50px;
+            display: flex;
+            justify-content: center;
+
+            .agro-empty-shop-card {
+                max-width: 640px;
+                width: 100%;
+                margin: 0 auto;
+                text-align: center;
+                padding: 48px 32px;
+                background: #ffffff;
+                border-radius: 18px;
+                border: 1px solid #f0f0f0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+
+                .empty-icon-wrap {
+                    margin-bottom: 22px;
+                    display: flex;
+                    justify-content: center;
+
+                    .empty-icon-circle {
+                        width: 76px;
+                        height: 76px;
+                        border-radius: 50%;
+                        background: #fee2e2;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        svg {
+                            width: 36px;
+                            height: 36px;
+                            stroke: var(--primary-color, #c82333);
+                        }
+                    }
+                }
+
+                .empty-state-header {
+                    margin-bottom: 26px;
+
+                    .empty-title {
+                        font-size: clamp(22px, 3.5vw, 26px);
+                        font-weight: 800;
+                        color: var(--text-dark, #1f2937);
+                        line-height: 1.3;
+                        margin: 0 0 10px;
+                        letter-spacing: -0.4px;
+
+                        .search-term {
+                            color: var(--primary-color, #c82333);
+                            font-weight: 800;
+                        }
+                    }
+
+                    .empty-subtitle {
+                        font-size: 14.5px;
+                        line-height: 1.6;
+                        color: #6b7280;
+                        max-width: 480px;
+                        margin: 0 auto;
+                    }
+                }
+
+                .empty-search-box {
+                    max-width: 460px;
+                    margin: 0 auto 28px;
+
+                    .agro-inline-search-form {
+                        margin: 0;
+
+                        .search-input-wrap {
+                            display: flex;
+                            align-items: center;
+                            background-color: #f3f4f6;
+                            border: 1.5px solid transparent;
+                            border-radius: 50px;
+                            padding: 4px 6px 4px 16px;
+                            transition: all 0.2s ease;
+
+                            &:focus-within {
+                                background-color: #ffffff;
+                                border-color: var(--primary-color, #c82333);
+                                box-shadow: 0 0 0 4px rgba(200, 35, 51, 0.12);
+                            }
+
+                            .search-icon {
+                                color: #9ca3af;
+                                display: flex;
+                                align-items: center;
+                                margin-right: 10px;
+                                flex-shrink: 0;
+                            }
+
+                            .search-field {
+                                flex: 1;
+                                height: 42px;
+                                border: none !important;
+                                outline: none !important;
+                                background: transparent !important;
+                                box-shadow: none !important;
+                                font-size: 14px;
+                                color: var(--text-dark, #1f2937);
+                                padding: 0;
+
+                                &::placeholder {
+                                    color: #9ca3af;
+                                }
+                            }
+
+                            .search-submit-btn {
+                                height: 40px;
+                                padding: 0 22px;
+                                border: none !important;
+                                border-radius: 50px !important;
+                                background-color: var(--primary-color, #c82333) !important;
+                                color: #ffffff !important;
+                                font-size: 13.5px !important;
+                                font-weight: 700 !important;
+                                cursor: pointer;
+                                flex-shrink: 0;
+                                transition: all 0.2s ease !important;
+
+                                &:hover {
+                                    background-color: var(--primary-hover, #a81c2a) !important;
+                                    transform: translateY(-1px);
+                                    box-shadow: 0 4px 12px rgba(200, 35, 51, 0.25);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .agro-empty-action-buttons {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                    flex-wrap: wrap;
+
+                    a {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        padding: 11px 22px;
+                        border-radius: 50px;
+                        font-size: 13.5px;
+                        font-weight: 700;
+                        text-decoration: none !important;
+                        transition: all 0.2s ease;
+
+                        svg {
+                            display: block;
+                            flex-shrink: 0;
+                        }
+                    }
+
+                    .agro-btn-home {
+                        background-color: var(--text-dark, #1f2937);
+                        color: #ffffff !important;
+
+                        &:hover {
+                            background-color: #000000;
+                            transform: translateY(-2px);
+                            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+                        }
+                    }
+
+                    .agro-btn-shop {
+                        background-color: #f3f4f6;
+                        color: var(--text-dark, #1f2937) !important;
+                        border: 1.5px solid #e5e7eb;
+
+                        &:hover {
+                            background-color: #ffffff;
+                            border-color: var(--primary-color, #c82333);
+                            color: var(--primary-color, #c82333) !important;
+                            transform: translateY(-2px);
+                            box-shadow: 0 4px 12px rgba(200, 35, 51, 0.1);
+                        }
+                    }
+                }
+
+                @media (max-width: 767px) {
+                    padding: 32px 18px;
+                    border-radius: 14px;
+
+                    .empty-search-box {
+                        .search-input-wrap {
+                            padding: 3px 4px 3px 12px;
+
+                            .search-field {
+                                font-size: 13px;
+                                height: 38px;
+                            }
+
+                            .search-submit-btn {
+                                height: 36px;
+                                padding: 0 16px;
+                                font-size: 13px;
+                            }
+                        }
+                    }
+
+                    .agro-empty-action-buttons {
+                        flex-direction: column;
+                        width: 100%;
+
+                        a {
+                            width: 100%;
+                            justify-content: center;
                         }
                     }
                 }

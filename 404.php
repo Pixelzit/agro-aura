@@ -23,6 +23,7 @@ get_header(); ?>
 							</header><!-- .page-header -->
 
 							<section class="agro-404-search-section" aria-label="<?php esc_attr_e( 'Search Products', 'storefront' ); ?>">
+								<?php /* ?>
 								<form role="search" method="get" class="agro-404-search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>">
 									<div class="search-field-wrap">
 										<span class="search-icon" aria-hidden="true">
@@ -35,6 +36,7 @@ get_header(); ?>
 										<button type="submit" class="search-submit"><?php esc_html_e( 'Search', 'storefront' ); ?></button>
 									</div>
 								</form>
+								<?php */ ?>
 
 								<div class="agro-404-quick-links">
 									<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="agro-btn-home">

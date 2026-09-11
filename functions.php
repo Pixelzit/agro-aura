@@ -57,7 +57,9 @@ function storefront_child_enqueue_styles() {
 		);
 	}
 
-	if ( is_shop() || is_product_taxonomy() || is_product() || is_front_page() ) {
+	$is_product_search = is_search() && ( 'product' === get_query_var( 'post_type' ) || ( isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'] ) );
+
+	if ( is_shop() || is_product_taxonomy() || is_product() || is_front_page() || $is_product_search ) {
 		$archive_js_path = get_stylesheet_directory() . '/assets/js/archive-product.js';
 		$archive_js_ver  = file_exists( $archive_js_path ) ? filemtime( $archive_js_path ) : $child_theme->get( 'Version' );
 
@@ -71,6 +73,18 @@ function storefront_child_enqueue_styles() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'storefront_child_enqueue_styles', 20 );
+
+/**
+ * Add post-type-archive-product class to body on WooCommerce product searches.
+ */
+function agro_aura_product_search_body_class( $classes ) {
+	if ( is_search() && ( 'product' === get_query_var( 'post_type' ) || ( isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'] ) ) ) {
+		$classes[] = 'post-type-archive-product';
+		$classes[] = 'woocommerce-search-page';
+	}
+	return $classes;
+}
+add_filter( 'body_class', 'agro_aura_product_search_body_class' );
 
 /**
  * Allow SVG upload in Media Library
