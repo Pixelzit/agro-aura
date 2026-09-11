@@ -94,14 +94,16 @@ if ( empty( $pack_options ) ) {
 	$discount     = $has_discount ? round( ( ( $reg_price - $base_price ) / $reg_price ) * 100 ) : 0;
 	$save         = $has_discount ? round( $reg_price - $base_price ) : 0;
 
-	// Fetch dynamic weight or pack size attribute for simple products
-	$pack_label = '';
-	if ( $product->has_weight() ) {
+	// Fetch dynamic volume, size, weight or pack attribute for simple products
+	$size_info  = function_exists( 'agro_aura_get_product_display_size' ) ? agro_aura_get_product_display_size( $product ) : array( 'label' => '' );
+	$pack_label = ! empty( $size_info['label'] ) ? $size_info['label'] : '';
+
+	if ( empty( $pack_label ) && $product->has_weight() ) {
 		$pack_label = $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit', 'kg' );
 	}
 
 	if ( empty( $pack_label ) ) {
-		$taxonomies = array( 'pa_weight', 'pa_size', 'pa_pack-size', 'pa_pack' );
+		$taxonomies = array( 'pa_weight', 'pa_size', 'pa_pack-size', 'pa_pack', 'pa_volume', 'pa_bottle-size' );
 		foreach ( $taxonomies as $tax ) {
 			$terms = get_the_terms( $product->get_id(), $tax );
 			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {

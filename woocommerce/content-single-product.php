@@ -145,9 +145,18 @@ if ( empty( $pack_options ) ) {
 	if ( $reg_price <= 0 || $reg_price < $base_price ) {
 		$reg_price = $base_price;
 	}
-	$has_disc     = ( $reg_price > $base_price );
-	$disc_perc    = $has_disc ? round( ( ( $reg_price - $base_price ) / $reg_price ) * 100 ) : 0;
-	$weight_label = $product->has_weight() ? ( $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit' ) ) : 'Standard Pack';
+	$has_disc  = ( $reg_price > $base_price );
+	$disc_perc = $has_disc ? round( ( ( $reg_price - $base_price ) / $reg_price ) * 100 ) : 0;
+
+	// Dynamic attribute & size resolution
+	$size_info = function_exists( 'agro_aura_get_product_display_size' ) ? agro_aura_get_product_display_size( $product ) : array( 'label' => '', 'attribute_name' => 'Pack Size', 'unit_price' => '' );
+
+	if ( ! empty( $size_info['attribute_name'] ) ) {
+		$attribute_label = $size_info['attribute_name'];
+	}
+
+	$weight_label   = ! empty( $size_info['label'] ) ? $size_info['label'] : ( $product->has_weight() ? ( $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit', 'kg' ) ) : 'Standard Pack' );
+	$unit_price_str = ! empty( $size_info['unit_price'] ) ? $size_info['unit_price'] : ( '₹' . number_format( round( $base_price ) ) . ' / pack' );
 
 	$pack_options[] = array(
 		'variation_id' => 0,
@@ -159,7 +168,7 @@ if ( empty( $pack_options ) ) {
 		'has_discount' => $has_disc,
 		'discount'     => $disc_perc,
 		'save'         => $has_disc ? ( $reg_price - $base_price ) : 0,
-		'unit_price'   => '₹' . number_format( round( $base_price ) ) . ' / pack',
+		'unit_price'   => $unit_price_str,
 		'badge_text'   => '',
 		'badge_type'   => '',
 		'is_in_stock'  => $product->is_in_stock(),

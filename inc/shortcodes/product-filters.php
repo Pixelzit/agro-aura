@@ -187,6 +187,14 @@ function agro_aura_get_product_pack_sizes( $product ) {
 		$packs[] = $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit', 'kg' );
 	}
 
+	// 4. Check dynamic product display size (Volume, Bottle Size, etc.)
+	if ( function_exists( 'agro_aura_get_product_display_size' ) ) {
+		$size_info = agro_aura_get_product_display_size( $product );
+		if ( ! empty( $size_info['label'] ) ) {
+			$packs[] = $size_info['label'];
+		}
+	}
+
 	return array_unique( $packs );
 }
 

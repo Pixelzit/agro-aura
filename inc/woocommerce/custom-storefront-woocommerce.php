@@ -133,3 +133,152 @@ function agro_aura_account_dashboard_cards() {
 	<?php
 }
 add_action( 'woocommerce_account_dashboard', 'agro_aura_account_dashboard_cards', 20 );
+
+/**
+ * Dynamic helper to get size, volume, weight, or pack attribute for any WooCommerce product.
+ * Supports custom product attributes (e.g. Volume: "90 ml"), taxonomies (pa_weight, pa_size, pa_volume),
+ * and WooCommerce native weight.
+ *
+ * @param WC_Product|int $product
+ * @return array array( 'label' => string, 'attribute_name' => string, 'unit_price' => string )
+ */
+function agro_aura_get_product_display_size( $product ) {
+	if ( is_numeric( $product ) ) {
+		$product = wc_get_product( $product );
+	}
+	if ( ! is_a( $product, 'WC_Product' ) ) {
+		return array(
+			'label'          => '',
+			'attribute_name' => __( 'Pack Size', 'storefront-child' ),
+			'unit_price'     => '',
+		);
+	}
+
+	$size_label = '';
+	$attr_title = __( 'Pack Size', 'storefront-child' );
+
+	// 1. Check all product attributes
+	$attributes = $product->get_attributes();
+	if ( ! empty( $attributes ) ) {
+		// Priority attribute slugs
+		$priority_slugs = array(
+			'volume', 'pa_volume',
+			'pack-size', 'pa_pack-size', 'pack_size', 'pa_pack_size', 'pack', 'pa_pack',
+			'bottle-size', 'pa_bottle-size', 'bottle_size',
+			'size', 'pa_size',
+			'weight', 'pa_weight', 'net-weight', 'pa_net-weight', 'net_weight',
+			'net-quantity', 'pa_net-quantity', 'net_quantity', 'quantity', 'pa_quantity',
+			'unit', 'pa_unit',
+		);
+
+		// Check priority slugs first
+		foreach ( $priority_slugs as $slug ) {
+			foreach ( $attributes as $k => $attr ) {
+				$attr_slug = strtolower( is_a( $attr, 'WC_Product_Attribute' ) ? $attr->get_name() : $k );
+				$clean_k   = strtolower( str_replace( array( 'pa_', 'attribute_' ), '', $k ) );
+				$clean_s   = strtolower( str_replace( array( 'pa_', 'attribute_' ), '', $slug ) );
+
+				if ( $clean_k === $clean_s || $attr_slug === $slug || $attr_slug === 'pa_' . $slug ) {
+					$val = $product->get_attribute( is_a( $attr, 'WC_Product_Attribute' ) ? $attr->get_name() : $k );
+					if ( ! empty( $val ) ) {
+						$size_label = trim( $val );
+						$attr_title = wc_attribute_label( is_a( $attr, 'WC_Product_Attribute' ) ? $attr->get_name() : $k, $product );
+						break 2;
+					}
+				}
+			}
+		}
+
+		// If no priority slug matched, check any attribute that has common size/weight/volume units
+		if ( empty( $size_label ) ) {
+			foreach ( $attributes as $k => $attr ) {
+				$val = $product->get_attribute( is_a( $attr, 'WC_Product_Attribute' ) ? $attr->get_name() : $k );
+				if ( ! empty( $val ) ) {
+					if ( preg_match( '/\d+\s*(ml|l|litre|liter|g|gm|kg|pcs|pc|pack|can|bottle|sachet)/i', $val ) ) {
+						$size_label = trim( $val );
+						$attr_title = wc_attribute_label( is_a( $attr, 'WC_Product_Attribute' ) ? $attr->get_name() : $k, $product );
+						break;
+					}
+				}
+			}
+		}
+
+		// If still empty and there are attributes, take the first visible attribute
+		if ( empty( $size_label ) ) {
+			foreach ( $attributes as $k => $attr ) {
+				$val = $product->get_attribute( is_a( $attr, 'WC_Product_Attribute' ) ? $attr->get_name() : $k );
+				if ( ! empty( $val ) ) {
+					$size_label = trim( $val );
+					$attr_title = wc_attribute_label( is_a( $attr, 'WC_Product_Attribute' ) ? $attr->get_name() : $k, $product );
+					break;
+				}
+			}
+		}
+	}
+
+	// 2. If no attribute found, check WooCommerce native weight
+	if ( empty( $size_label ) && $product->has_weight() ) {
+		$weight = (float) $product->get_weight();
+		$unit   = get_option( 'woocommerce_weight_unit', 'kg' );
+		if ( $weight > 0 ) {
+			$size_label = $weight . ' ' . $unit;
+			$attr_title = __( 'Weight', 'storefront-child' );
+		}
+	}
+
+	// 3. Compute dynamic unit price
+	$price      = (float) $product->get_price();
+	$unit_price = '';
+
+	if ( ! empty( $size_label ) && $price > 0 ) {
+		// Multi-pack check e.g. "4 x 1 L" or "5 x 500 ml"
+		if ( preg_match( '/^(\d+)\s*[xX*]\s*([\d\.]+)\s*([a-zA-Z]+)?/i', $size_label, $m ) ) {
+			$count = (float) $m[1];
+			$each  = (float) $m[2];
+			$unit  = isset( $m[3] ) ? strtolower( trim( $m[3] ) ) : '';
+			$total = $count * $each;
+
+			if ( $total > 0 ) {
+				if ( 'ml' === $unit ) {
+					$l          = $total / 1000;
+					$unit_price = '₹' . number_format( round( $price / $l ) ) . ' / L';
+				} elseif ( 'l' === $unit || 'liter' === $unit || 'litre' === $unit ) {
+					$unit_price = '₹' . number_format( round( $price / $total ) ) . ' / L';
+				} elseif ( 'g' === $unit || 'gm' === $unit ) {
+					$kg         = $total / 1000;
+					$unit_price = '₹' . number_format( round( $price / $kg ) ) . ' / kg';
+				} elseif ( 'kg' === $unit ) {
+					$unit_price = '₹' . number_format( round( $price / $total ) ) . ' / kg';
+				}
+			}
+		} elseif ( preg_match( '/^([\d\.]+)\s*([a-zA-Z]+)?/i', $size_label, $m ) ) {
+			$qty_val  = (float) $m[1];
+			$unit_val = isset( $m[2] ) ? strtolower( trim( $m[2] ) ) : '';
+
+			if ( $qty_val > 0 ) {
+				if ( 'g' === $unit_val || 'gm' === $unit_val ) {
+					$kg         = $qty_val / 1000;
+					$unit_price = '₹' . number_format( round( $price / $kg ) ) . ' / kg';
+				} elseif ( 'kg' === $unit_val ) {
+					$unit_price = '₹' . number_format( round( $price / $qty_val ) ) . ' / kg';
+				} elseif ( 'ml' === $unit_val ) {
+					$l          = $qty_val / 1000;
+					$unit_price = '₹' . number_format( round( $price / $l ) ) . ' / L';
+				} elseif ( 'l' === $unit_val || 'litre' === $unit_val || 'liter' === $unit_val ) {
+					$unit_price = '₹' . number_format( round( $price / $qty_val ) ) . ' / L';
+				}
+			}
+		}
+	}
+
+	if ( empty( $unit_price ) && $price > 0 ) {
+		$unit_price = '₹' . number_format( round( $price ) ) . ' / pack';
+	}
+
+	return array(
+		'label'          => $size_label,
+		'attribute_name' => ! empty( $attr_title ) ? $attr_title : __( 'Pack Size', 'storefront-child' ),
+		'unit_price'     => $unit_price,
+	);
+}
+
