@@ -282,3 +282,43 @@ function agro_aura_get_product_display_size( $product ) {
 	);
 }
 
+/**
+ * Add product thumbnail image to order received items table
+ */
+function agro_aura_order_item_thumbnail( $item_name, $item, $is_visible ) {
+	if ( ! is_order_received_page() && ! is_view_order_page() ) {
+		return $item_name;
+	}
+	$product = is_object( $item ) && method_exists( $item, 'get_product' ) ? $item->get_product() : null;
+	if ( ! $product ) {
+		return $item_name;
+	}
+	$image = $product->get_image( array( 64, 64 ), array( 'class' => 'agro-order-item-img' ) );
+	return '<div class="agro-order-product-cell">' . $image . '<div class="agro-order-product-meta">' . $item_name . '</div></div>';
+}
+add_filter( 'woocommerce_order_item_name', 'agro_aura_order_item_thumbnail', 20, 3 );
+
+/**
+ * Allow viewing order-received / thank you page if the order key is valid.
+ * Prevents unnecessary login or email verification wall when customer views their order confirmation.
+ */
+function agro_aura_allow_order_received_with_key( $verify_known_shoppers ) {
+	$order_id = isset( $GLOBALS['wp']->query_vars['order-received'] ) ? absint( $GLOBALS['wp']->query_vars['order-received'] ) : 0;
+	if ( $order_id && isset( $_GET['key'] ) ) {
+		$order = wc_get_order( $order_id );
+		if ( $order && hash_equals( $order->get_order_key(), wc_clean( wp_unslash( $_GET['key'] ) ) ) ) {
+			return false;
+		}
+	}
+	return $verify_known_shoppers;
+}
+add_filter( 'woocommerce_order_received_verify_known_shoppers', 'agro_aura_allow_order_received_with_key', 10, 1 );
+
+function agro_aura_bypass_order_email_verification_with_key( $required, $order, $context ) {
+	if ( $order && isset( $_GET['key'] ) && hash_equals( $order->get_order_key(), wc_clean( wp_unslash( $_GET['key'] ) ) ) ) {
+		return false;
+	}
+	return $required;
+}
+add_filter( 'woocommerce_order_email_verification_required', 'agro_aura_bypass_order_email_verification_with_key', 10, 3 );
+
