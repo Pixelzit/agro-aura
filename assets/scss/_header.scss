@@ -769,12 +769,13 @@
         form.woocommerce-product-search,
         form.search-form,
         form[role="search"] {
-            padding: 3px 4px 3px 14px !important;
+            // padding: 3px 4px 3px 14px !important;
 
             &::before {
                 width: 16px !important;
                 height: 16px !important;
                 margin-right: 8px !important;
+                top: 14px;
             }
         }
 
