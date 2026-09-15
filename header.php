@@ -35,11 +35,14 @@ $avatar_url    = $current_user->exists() ? get_avatar_url( $current_user->ID, ar
 	<?php do_action( 'storefront_before_header' ); ?>
 
 	<header id="masthead" class="site-header site-header-wrap" role="banner" style="<?php storefront_header_styles(); ?>">
-		<section class="site-top-header">
-			<div class="site-container">
-				50 % off on your first order upto Rs 200, will be credited in your Frugivore Wallet upon the delivery of your first order.
-			</div>
-		</section>
+		
+		<?php if ( is_active_sidebar( 'header-top' ) ) : ?>			
+			<section class="site-top-header">
+				<div class="site-container">
+					<?php dynamic_sidebar( 'header-top' ); ?>
+				</div>
+			</section>
+		<?php endif; ?>
 
 		<section class="site-main-header">
 			<div class="site-container">

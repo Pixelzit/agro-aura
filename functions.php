@@ -99,6 +99,7 @@ add_filter( 'upload_mimes', 'agro_aura_allow_svg_upload' );
  * Adjust header hooks to prevent duplicate branding, search, and cart.
  */
 require_once get_stylesheet_directory() . '/inc/storefront-template-functions.php';
+require_once get_stylesheet_directory() . '/inc/custom-widgets.php';
 
 /**
  * Custom WooCommerce hooks and template functions
