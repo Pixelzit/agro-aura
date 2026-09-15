@@ -46,9 +46,11 @@ function agro_aura_product_categories_shortcode( $atts ) {
 			'parent'     => 0,            // 0 = top-level categories only, '' = all categories
 			'include'    => '',           // Comma-separated category IDs
 			'exclude'    => '',           // Comma-separated category IDs
-			'title'      => '',           // Optional section heading
-			'sub_title'  => '',           // Optional section subtitle
-			'class'      => '',           // Additional CSS classes
+			'title'          => '',           // Optional section heading
+			'sub_title'      => '',           // Optional section subtitle
+			'class'          => '',           // Additional CSS classes
+			'view_more_url'  => '',           // Optional custom URL for View More button (defaults to shop page)
+			'view_more_text' => 'View More',  // Button text
 		),
 		$atts,
 		'agro_product_categories'
@@ -182,6 +184,9 @@ function agro_aura_product_categories_shortcode( $atts ) {
 
 	$custom_class = ! empty( $atts['class'] ) ? ' ' . esc_attr( $atts['class'] ) : '';
 
+	$shop_url       = ! empty( $atts['view_more_url'] ) ? $atts['view_more_url'] : ( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' ) );
+	$view_more_text = ! empty( $atts['view_more_text'] ) ? $atts['view_more_text'] : __( 'View More', 'storefront-child' );
+
 	ob_start();
 	?>
 	<section class="agro-categories-section<?php echo esc_attr( $custom_class ); ?>" aria-label="<?php esc_attr_e( 'Product Categories', 'storefront-child' ); ?>">
@@ -215,6 +220,19 @@ function agro_aura_product_categories_shortcode( $atts ) {
 				<?php endforeach; ?>
 			</div>
 
+			<!-- View More Button -->
+			<div class="agro-categories-view-more-wrap">
+				<a 
+					href="<?php echo esc_url( $shop_url ); ?>" 
+					class="agro-categories-view-more-btn" 
+				>
+					<span class="btn-text"><?php echo esc_html( $view_more_text ); ?></span>
+					<svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="5" y1="12" x2="19" y2="12"></line>
+						<polyline points="12 5 19 12 12 19"></polyline>
+					</svg>
+				</a>
+			</div>
 		
 	</section>
 	<?php
