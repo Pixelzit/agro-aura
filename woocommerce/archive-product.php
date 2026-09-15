@@ -33,7 +33,7 @@ $has_products = woocommerce_product_loop();
 		<!-- ========================================== -->
 		<!-- 1. LEFT COLUMN: REFINE SHELF (SIDEBAR)     -->
 		<!-- ========================================== -->
-		<aside>
+		<aside class="agro-sidebar-wrap">
 			<?php echo do_shortcode( '[agro_product_filters]' ); ?>
 		</aside>
 	<?php endif; ?>

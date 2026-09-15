@@ -51,12 +51,24 @@ body.woocommerce-search-page {
     // ==========================================
     // 1. LEFT COLUMN: REFINE SHELF (SIDEBAR)
     // ==========================================
+    @media (min-width: 1025px) {
+        .agro-sidebar-wrap {
+            position: sticky;
+            top: 20px;
+        }
+
+        &.admin-bar {
+            .agro-sidebar-wrap {
+                position: sticky;
+                top: 52px;
+            }
+        }
+    }
+
     .agro-shop-sidebar {
         background-color: #ffffff;
         border-radius: 12px;
         padding: 0;
-        position: sticky;
-        top: 20px;
 
         .refine-shelf-header {
             display: flex;
