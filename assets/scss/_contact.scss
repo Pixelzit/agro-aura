@@ -1,0 +1,175 @@
+.agro-contact-form {
+    width: 100%;
+
+    br {
+        display: none;
+    }
+
+    .agro-form-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .agro-form-group {
+        margin-bottom: 20px;
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #18212f;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.4;
+
+            span {
+                color: #8a8f98;
+                font-size: 12px;
+                font-weight: 400;
+            }
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #e6ded5;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #18212f;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            outline: none;
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background-color 0.2s ease;
+
+            &::placeholder {
+                color: #a4a4a4;
+                opacity: 1;
+            }
+
+            &:hover {
+                border-color: #d8c9bd;
+            }
+
+            &:focus {
+                border-color: #c5162e;
+                background-color: #fff;
+                box-shadow: 0 0 0 3px rgba(197, 22, 46, 0.08);
+            }
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            height: 48px;
+            padding: 0 15px;
+        }
+
+        textarea {
+            min-height: 145px;
+            padding: 13px 15px;
+            resize: vertical;
+        }
+    }
+
+    .agro-form-submit {
+        margin-top: 5px;
+
+        input[type="submit"] {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 160px;
+            min-height: 46px;
+            padding: 12px 24px;
+            border: 0;
+            border-radius: 7px;
+            background: #c5162e;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1;
+            cursor: pointer;
+            transition:
+                background-color 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+            &:hover {
+                background: #a91025;
+                box-shadow: 0 6px 16px rgba(197, 22, 46, 0.18);
+                transform: translateY(-1px);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+    }
+
+    // CF7 validation
+    .wpcf7-not-valid {
+        border-color: #d62839 !important;
+    }
+
+    .wpcf7-not-valid-tip {
+        margin-top: 6px;
+        color: #d62839;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .wpcf7-response-output {
+        margin: 20px 0 0 !important;
+        padding: 12px 15px !important;
+        border: 1px solid #e6ded5 !important;
+        border-radius: 7px;
+        background: #fffaf5;
+        color: #4a4a4a;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+}
+
+
+// ------------------------------------
+// Responsive
+// ------------------------------------
+
+@media (max-width: 767px) {
+
+    .agro-contact-form {
+
+        .agro-form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+            margin-bottom: 0;
+        }
+
+        .agro-form-group {
+            margin-bottom: 18px;
+
+            input[type="text"],
+            input[type="email"] {
+                height: 46px;
+            }
+
+            textarea {
+                min-height: 125px;
+            }
+        }
+
+        .agro-form-submit {
+            input[type="submit"] {
+                width: 100%;
+            }
+        }
+    }
+}
