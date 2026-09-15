@@ -232,6 +232,51 @@
             }
         }
 
+        // 0. Accordion Toggle for .filter-group on screens <= 1024px
+        function initFilterAccordions() {
+            if (!sidebar) return;
+            if (window.innerWidth <= 1024) {
+                var groups = sidebar.querySelectorAll('.filter-group');
+                groups.forEach(function (group, idx) {
+                    if (group.dataset.userToggled === 'true') {
+                        return;
+                    }
+                    var hasActive = group.querySelector('.is-active, input[type="checkbox"]:checked, .pack-pill-btn.is-active');
+                    if (hasActive || idx === 0) {
+                        group.classList.add('is-open');
+                    } else {
+                        group.classList.remove('is-open');
+                    }
+                });
+            } else {
+                sidebar.querySelectorAll('.filter-group').forEach(function (group) {
+                    group.classList.remove('is-open');
+                });
+            }
+        }
+
+        initFilterAccordions();
+
+        if (sidebar) {
+            sidebar.addEventListener('click', function (e) {
+                var heading = e.target.closest('.filter-group .filter-heading');
+                if (!heading) return;
+
+                if (window.innerWidth <= 1024) {
+                    e.preventDefault();
+                    var group = heading.closest('.filter-group');
+                    if (group) {
+                        group.classList.toggle('is-open');
+                        group.dataset.userToggled = 'true';
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('resize', function () {
+            initFilterAccordions();
+        });
+
         // 1. Sidebar Category Filter Click Handling
         if (sidebar) {
             sidebar.addEventListener('click', function (e) {

@@ -278,11 +278,82 @@
         }
     }
 
-    // Responsive / Standalone Mode
+    // Responsive / Standalone Mode - Accordion for .filter-group on <= 1024px
     @media (max-width: 1024px) {
         position: static;
         border: 1px solid #f0f0f0;
-        padding: 20px;
+        padding: 18px;
+
+        .filter-group {
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 14px;
+            margin-bottom: 14px;
+
+            &:last-of-type {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+
+            .filter-heading {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                cursor: pointer;
+                user-select: none;
+                margin-bottom: 0;
+                padding: 6px 0;
+                font-size: 12px;
+                font-weight: 800;
+                color: #374151;
+                transition: color 0.2s ease;
+
+                &::after {
+                    content: "";
+                    display: inline-block;
+                    width: 8px;
+                    height: 8px;
+                    border-right: 2px solid #6b7280;
+                    border-bottom: 2px solid #6b7280;
+                    transform: rotate(45deg);
+                    transition: transform 0.25s ease, border-color 0.2s ease;
+                    margin-left: 10px;
+                    flex-shrink: 0;
+                }
+
+                &:hover {
+                    color: var(--primary-color);
+
+                    &::after {
+                        border-color: var(--primary-color);
+                    }
+                }
+            }
+
+            // Accordion collapsible content
+            > *:not(.filter-heading) {
+                display: none;
+                padding-top: 10px;
+            }
+
+            // Expanded / Active accordion state
+            &.is-open {
+                .filter-heading {
+                    color: var(--primary-color);
+                    margin-bottom: 8px;
+
+                    &::after {
+                        transform: rotate(-135deg);
+                        border-color: var(--primary-color);
+                    }
+                }
+
+                > *:not(.filter-heading) {
+                    display: block;
+                    animation: filterAccordionFadeIn 0.25s ease;
+                }
+            }
+        }
     }
 }
 
@@ -381,3 +452,14 @@
         transform: translate(-50%, -50%) rotate(360deg);
     }
 }
+
+@keyframes filterAccordionFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
