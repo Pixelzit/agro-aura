@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const buyNowFlag = document.getElementById('agro-buy-now-flag');
     const cartForm = document.querySelector('form.cart');
 
+    const addToCartBtn = document.getElementById('agro-add-to-cart-btn');
+    const attrContainer = document.getElementById('agro-variation-attributes-container');
+
     let currentPackPrice = 0;
 
     // Initialize currentPackPrice from selected card
@@ -85,9 +88,31 @@ document.addEventListener('DOMContentLoaded', function () {
                     variationInput.value = card.dataset.variationId;
                 }
 
-                // Update attribute input
-                if (card.dataset.attrVal && attrInput) {
-                    attrInput.value = card.dataset.attrVal;
+                // Update all variation attributes in the container
+                if (attrContainer && card.dataset.attributes) {
+                    try {
+                        const attrs = JSON.parse(card.dataset.attributes);
+                        attrContainer.innerHTML = '';
+                        for (const [key, val] of Object.entries(attrs)) {
+                            if (key) {
+                                const hiddenAttr = document.createElement('input');
+                                hiddenAttr.type = 'hidden';
+                                hiddenAttr.name = key;
+                                hiddenAttr.className = 'agro-var-attr';
+                                hiddenAttr.value = val || '';
+                                attrContainer.appendChild(hiddenAttr);
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Failed to parse variation attributes JSON', e);
+                    }
+                } else if (attrInput) {
+                    if (card.dataset.attrName) {
+                        attrInput.name = card.dataset.attrName;
+                    }
+                    if (card.dataset.attrVal !== undefined) {
+                        attrInput.value = card.dataset.attrVal;
+                    }
                 }
 
                 // Update pack price & button total
@@ -110,15 +135,44 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 3. 1-Click Buy Action
+    // 3. 1-Click Buy Action & Add to Cart Synchronisation
+    if (buyNowFlag) {
+        buyNowFlag.value = '0';
+    }
+
+    window.addEventListener('pageshow', function () {
+        if (buyNowFlag) {
+            buyNowFlag.value = '0';
+        }
+    });
+
+    if (addToCartBtn && buyNowFlag) {
+        addToCartBtn.addEventListener('click', function () {
+            buyNowFlag.value = '0';
+        });
+    }
+
     if (buyNowBtn && cartForm) {
         buyNowBtn.addEventListener('click', function (e) {
-            e.preventDefault();
             if (buyNowFlag) {
                 buyNowFlag.value = '1';
             }
-            // Trigger standard form submit
-            cartForm.submit();
+
+            // Ensure add-to-cart input exists
+            let addInput = cartForm.querySelector('input[name="add-to-cart"]');
+            if (!addInput) {
+                addInput = document.createElement('input');
+                addInput.type = 'hidden';
+                addInput.name = 'add-to-cart';
+                addInput.value = (addToCartBtn && addToCartBtn.value) ? addToCartBtn.value : '';
+                cartForm.appendChild(addInput);
+            }
+
+            // If the button is type="button", submit the form manually
+            if (buyNowBtn.getAttribute('type') !== 'submit') {
+                e.preventDefault();
+                cartForm.submit();
+            }
         });
     }
 

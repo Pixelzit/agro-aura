@@ -132,6 +132,7 @@ if ( $product->is_type( 'variable' ) ) {
 			'label'        => $display_label,
 			'attr_name'    => $attr_name_key,
 			'attr_val'     => $attr_val,
+			'attributes'   => ! empty( $var['attributes'] ) ? $var['attributes'] : array(),
 			'price'        => $v_price,
 			'regular'      => $v_regular,
 			'has_discount' => $v_has_discount,
@@ -173,6 +174,7 @@ if ( empty( $pack_options ) ) {
 		'label'        => $weight_label,
 		'attr_name'    => '',
 		'attr_val'     => '',
+		'attributes'   => array(),
 		'price'        => $base_price,
 		'regular'      => $reg_price,
 		'has_discount' => $has_disc,
@@ -274,7 +276,8 @@ if ( empty( $sku ) ) {
 						 data-discount="<?php echo esc_attr( $pack['discount'] ); ?>"
 						 data-unit="<?php echo esc_attr( $pack['unit_price'] ); ?>"
 						 data-attr-name="<?php echo esc_attr( $pack['attr_name'] ); ?>"
-						 data-attr-val="<?php echo esc_attr( $pack['attr_val'] ); ?>">
+						 data-attr-val="<?php echo esc_attr( $pack['attr_val'] ); ?>"
+						 data-attributes="<?php echo esc_attr( wp_json_encode( ! empty( $pack['attributes'] ) ? $pack['attributes'] : ( ! empty( $pack['attr_name'] ) ? array( $pack['attr_name'] => $pack['attr_val'] ) : array() ) ) ); ?>">
 						<?php if ( ! empty( $pack['badge_text'] ) ) : ?>
 							<span class="agro-badge <?php echo esc_attr( $pack['badge_type'] ); ?> pack-card-badge"><?php echo esc_html( $pack['badge_text'] ); ?></span>
 						<?php endif; ?>
@@ -312,7 +315,7 @@ if ( empty( $sku ) ) {
 				</button>
 
 				<!-- 1-Click Buy -->
-				<button type="button" class="btn-agro-buy-now" id="agro-buy-now-btn">
+				<button type="submit" name="agro_buy_now_btn" value="1" class="btn-agro-buy-now" id="agro-buy-now-btn">
 					<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
 						<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
 					</svg>
@@ -320,11 +323,19 @@ if ( empty( $sku ) ) {
 				</button>
 
 				<!-- Hidden state inputs for WooCommerce and Buy Now -->
+				<input type="hidden" name="add-to-cart" id="agro-hidden-add-to-cart" value="<?php echo esc_attr( $product->get_id() ); ?>" />
+				<input type="hidden" name="product_id" value="<?php echo esc_attr( $product->get_id() ); ?>" />
 				<input type="hidden" name="agro_buy_now" id="agro-buy-now-flag" value="0" />
 				<input type="hidden" name="variation_id" class="variation_id" id="agro-variation-id" value="<?php echo esc_attr( $default_pack['variation_id'] ); ?>" />
-				<?php if ( ! empty( $default_pack['attr_name'] ) ) : ?>
-					<input type="hidden" name="<?php echo esc_attr( $default_pack['attr_name'] ); ?>" id="agro-attr-input" value="<?php echo esc_attr( $default_pack['attr_val'] ); ?>" />
-				<?php endif; ?>
+				<div id="agro-variation-attributes-container">
+					<?php if ( ! empty( $default_pack['attributes'] ) && is_array( $default_pack['attributes'] ) ) : ?>
+						<?php foreach ( $default_pack['attributes'] as $attr_k => $attr_v ) : ?>
+							<input type="hidden" name="<?php echo esc_attr( $attr_k ); ?>" class="agro-var-attr" data-attr-key="<?php echo esc_attr( $attr_k ); ?>" value="<?php echo esc_attr( $attr_v ); ?>" />
+						<?php endforeach; ?>
+					<?php elseif ( ! empty( $default_pack['attr_name'] ) ) : ?>
+						<input type="hidden" name="<?php echo esc_attr( $default_pack['attr_name'] ); ?>" class="agro-var-attr" id="agro-attr-input" value="<?php echo esc_attr( $default_pack['attr_val'] ); ?>" />
+					<?php endif; ?>
+				</div>
 				<input type="hidden" name="agro_pack_size" id="agro-pack-size-input" value="<?php echo esc_attr( $default_pack['label'] ); ?>" />
 			</div>
 		</form>

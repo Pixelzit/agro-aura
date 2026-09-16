@@ -1,5 +1,10 @@
 @use "colors" as *;
 
+.woocommerce-message {
+    max-width: 1560px;
+    margin-inline: auto !important;
+}
+
 // 1. Shared Product Badges & Tags
 .agro-badge {
     display: inline-flex;

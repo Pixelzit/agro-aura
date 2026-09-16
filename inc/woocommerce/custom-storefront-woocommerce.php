@@ -21,12 +21,12 @@ add_action( 'after_setup_theme', 'agro_aura_theme_setup', 50 );
  * Handle 1-Click Buy button: redirect directly to checkout page
  */
 function agro_aura_buy_now_redirect( $url ) {
-	if ( isset( $_REQUEST['agro_buy_now'] ) && '1' === strval( $_REQUEST['agro_buy_now'] ) ) {
+	if ( ( isset( $_REQUEST['agro_buy_now'] ) && '1' === strval( $_REQUEST['agro_buy_now'] ) ) || ! empty( $_REQUEST['agro_buy_now_btn'] ) ) {
 		return wc_get_checkout_url();
 	}
 	return $url;
 }
-add_filter( 'woocommerce_add_to_cart_redirect', 'agro_aura_buy_now_redirect', 20, 1 );
+add_filter( 'woocommerce_add_to_cart_redirect', 'agro_aura_buy_now_redirect', 99, 1 );
 
 /**
  * Remove default single product sale flash so our custom offer badge over the image is used instead

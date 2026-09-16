@@ -368,19 +368,19 @@ body.single-product {
                 gap: 14px;
                 flex-wrap: wrap;
 
-                .agro-quantity-stepper {
-                    flex-shrink: 0;
-                }
+                // .agro-quantity-stepper {
+                //     flex-shrink: 0;
+                // }
 
-                .btn-agro-primary {
-                    flex: 1.5;
-                    min-width: 190px;
-                }
+                // .btn-agro-primary {
+                //     flex: 1.5;
+                //     min-width: 190px;
+                // }
 
-                .btn-agro-buy-now {
-                    flex: 1;
-                    min-width: 140px;
-                }
+                // .btn-agro-buy-now {
+                //     flex: 1;
+                //     min-width: 140px;
+                // }
             }
 
             // Hide standard single_add_to_cart_button if custom button is used
