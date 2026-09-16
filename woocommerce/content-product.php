@@ -57,7 +57,14 @@ if ( $product->is_type( 'variable' ) ) {
 			}
 		}
 		if ( empty( $attr_label ) ) {
-			$attr_label = 'Pack ' . ( $idx + 1 );
+			$var_obj = wc_get_product( $var['variation_id'] );
+			if ( $var_obj && $var_obj->has_weight() && function_exists( 'agro_aura_format_weight' ) ) {
+				$attr_label = agro_aura_format_weight( $var_obj->get_weight() );
+			} else {
+				$attr_label = 'Pack ' . ( $idx + 1 );
+			}
+		} elseif ( function_exists( 'agro_aura_format_weight_string' ) ) {
+			$attr_label = agro_aura_format_weight_string( $attr_label );
 		}
 
 		$v_price   = (float) $var['display_price'];
@@ -99,7 +106,7 @@ if ( empty( $pack_options ) ) {
 	$pack_label = ! empty( $size_info['label'] ) ? $size_info['label'] : '';
 
 	if ( empty( $pack_label ) && $product->has_weight() ) {
-		$pack_label = $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit', 'kg' );
+		$pack_label = function_exists( 'agro_aura_format_weight' ) ? agro_aura_format_weight( $product->get_weight() ) : ( $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit', 'kg' ) );
 	}
 
 	if ( empty( $pack_label ) ) {
@@ -107,7 +114,7 @@ if ( empty( $pack_options ) ) {
 		foreach ( $taxonomies as $tax ) {
 			$terms = get_the_terms( $product->get_id(), $tax );
 			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-				$pack_label = $terms[0]->name;
+				$pack_label = function_exists( 'agro_aura_format_weight_string' ) ? agro_aura_format_weight_string( $terms[0]->name ) : $terms[0]->name;
 				break;
 			}
 		}

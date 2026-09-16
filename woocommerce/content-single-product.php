@@ -60,7 +60,17 @@ if ( $product->is_type( 'variable' ) ) {
 		}
 
 		if ( empty( $attr_val ) ) {
-			$attr_val = 'Pack ' . ( $idx + 1 );
+			$var_obj = wc_get_product( $var['variation_id'] );
+			if ( $var_obj && $var_obj->has_weight() && function_exists( 'agro_aura_format_weight' ) ) {
+				$display_label = agro_aura_format_weight( $var_obj->get_weight() );
+			} else {
+				$display_label = 'Pack ' . ( $idx + 1 );
+			}
+		} else {
+			$tax_key   = str_replace( 'attribute_', '', $attr_name_key );
+			$term      = get_term_by( 'slug', $attr_val, $tax_key );
+			$term_name = ( $term && ! is_wp_error( $term ) ) ? $term->name : $attr_val;
+			$display_label = function_exists( 'agro_aura_format_weight_string' ) ? agro_aura_format_weight_string( $term_name ) : $term_name;
 		}
 
 		$v_price   = (float) $var['display_price'];
@@ -73,15 +83,15 @@ if ( $product->is_type( 'variable' ) ) {
 		$v_discount     = $v_has_discount ? round( ( ( $v_regular - $v_price ) / $v_regular ) * 100 ) : 0;
 		$v_save         = $v_has_discount ? round( $v_regular - $v_price ) : 0;
 
-		// Parse unit price (e.g. "1 L", "2 L", "5 L", "500 g", "1 kg", "5 kg", "10 kg", "500 ml")
+		// Parse unit price (e.g. "1 L", "2 L", "5 L", "500 g", "500 gm", "1 kg", "5 kg", "10 kg", "500 ml")
 		$unit_price_str = '';
-		$weight_trim    = trim( $attr_val );
+		$weight_trim    = trim( $display_label );
 		if ( preg_match( '/^([\d\.]+)\s*([a-zA-Z]+)?/i', $weight_trim, $matches ) ) {
 			$qty_val  = (float) $matches[1];
 			$unit_val = isset( $matches[2] ) ? strtolower( trim( $matches[2] ) ) : '';
 
 			if ( $qty_val > 0 ) {
-				if ( 'g' === $unit_val ) {
+				if ( 'g' === $unit_val || 'gm' === $unit_val ) {
 					$kg             = $qty_val / 1000;
 					$unit_price_str = '₹' . number_format( round( $v_price / $kg ) ) . ' / kg';
 				} elseif ( 'kg' === $unit_val ) {
@@ -119,7 +129,7 @@ if ( $product->is_type( 'variable' ) ) {
 
 		$pack_options[] = array(
 			'variation_id' => $var['variation_id'],
-			'label'        => $attr_val,
+			'label'        => $display_label,
 			'attr_name'    => $attr_name_key,
 			'attr_val'     => $attr_val,
 			'price'        => $v_price,
@@ -155,7 +165,7 @@ if ( empty( $pack_options ) ) {
 		$attribute_label = $size_info['attribute_name'];
 	}
 
-	$weight_label   = ! empty( $size_info['label'] ) ? $size_info['label'] : ( $product->has_weight() ? ( $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit', 'kg' ) ) : 'Standard Pack' );
+	$weight_label   = ! empty( $size_info['label'] ) ? ( function_exists( 'agro_aura_format_weight_string' ) ? agro_aura_format_weight_string( $size_info['label'] ) : $size_info['label'] ) : ( $product->has_weight() ? ( function_exists( 'agro_aura_format_weight' ) ? agro_aura_format_weight( $product->get_weight() ) : ( $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit', 'kg' ) ) ) : 'Standard Pack' );
 	$unit_price_str = ! empty( $size_info['unit_price'] ) ? $size_info['unit_price'] : ( '₹' . number_format( round( $base_price ) ) . ' / pack' );
 
 	$pack_options[] = array(

@@ -177,14 +177,14 @@ function agro_aura_get_product_pack_sizes( $product ) {
 		$terms = get_the_terms( $product->get_id(), $tax );
 		if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
 			foreach ( $terms as $term ) {
-				$packs[] = $term->name;
+				$packs[] = function_exists( 'agro_aura_format_weight_string' ) ? agro_aura_format_weight_string( $term->name ) : $term->name;
 			}
 		}
 	}
 
 	// 3. Check product weight
 	if ( $product->has_weight() ) {
-		$packs[] = $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit', 'kg' );
+		$packs[] = function_exists( 'agro_aura_format_weight' ) ? agro_aura_format_weight( $product->get_weight() ) : ( $product->get_weight() . ' ' . get_option( 'woocommerce_weight_unit', 'kg' ) );
 	}
 
 	// 4. Check dynamic product display size (Volume, Bottle Size, etc.)
@@ -196,6 +196,24 @@ function agro_aura_get_product_pack_sizes( $product ) {
 	}
 
 	return array_unique( $packs );
+}
+
+/**
+ * Compare two pack sizes flexibly (e.g. 500gm, 500g, 0.5kg)
+ */
+function agro_aura_compare_pack_sizes( $p1, $p2 ) {
+	$s1 = strtolower( trim( str_replace( array( ' ', 'm' ), '', $p1 ) ) );
+	$s2 = strtolower( trim( str_replace( array( ' ', 'm' ), '', $p2 ) ) );
+	if ( $s1 === $s2 ) {
+		return true;
+	}
+	if ( ( '500g' === $s1 && '0.5kg' === $s2 ) || ( '0.5kg' === $s1 && '500g' === $s2 ) ) {
+		return true;
+	}
+	if ( ( '250g' === $s1 && '0.25kg' === $s2 ) || ( '0.25kg' === $s1 && '250g' === $s2 ) ) {
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -235,7 +253,7 @@ function agro_aura_get_available_pack_sizes_with_counts( $category_slug = '' ) {
 			$product_packs = agro_aura_get_product_pack_sizes( $pid );
 			foreach ( $standard_packs as $sp ) {
 				foreach ( $product_packs as $pp ) {
-					if ( strtolower( $pp ) === strtolower( $sp ) ) {
+					if ( agro_aura_compare_pack_sizes( $pp, $sp ) ) {
 						$counts[ $sp ]++;
 						break;
 					}
@@ -368,7 +386,7 @@ function agro_aura_ajax_filter_products() {
 		foreach ( $all_prods as $pid ) {
 			$prod_packs = agro_aura_get_product_pack_sizes( $pid );
 			foreach ( $prod_packs as $pp ) {
-				if ( strtolower( $pp ) === strtolower( $pack_size ) ) {
+				if ( agro_aura_compare_pack_sizes( $pp, $pack_size ) ) {
 					$matched_ids[] = $pid;
 					break;
 				}

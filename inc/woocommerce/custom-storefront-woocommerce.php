@@ -135,6 +135,102 @@ function agro_aura_account_dashboard_cards() {
 add_action( 'woocommerce_account_dashboard', 'agro_aura_account_dashboard_cards', 20 );
 
 /**
+ * Format numeric weight. If less than 1kg, format in grams ('gm').
+ *
+ * @param float|string $weight
+ * @param string       $unit
+ * @return string
+ */
+function agro_aura_format_weight( $weight, $unit = '' ) {
+	$weight_num = (float) $weight;
+	if ( $weight_num <= 0 ) {
+		return '';
+	}
+
+	if ( empty( $unit ) ) {
+		$unit = get_option( 'woocommerce_weight_unit', 'kg' );
+	}
+	$unit = strtolower( trim( $unit ) );
+
+	if ( 'kg' === $unit ) {
+		if ( $weight_num < 1 ) {
+			$gm = round( $weight_num * 1000, 2 );
+			if ( (float) (int) $gm === (float) $gm ) {
+				$gm = (int) $gm;
+			}
+			return $gm . ' gm';
+		} else {
+			if ( (float) (int) $weight_num === (float) $weight_num ) {
+				$weight_num = (int) $weight_num;
+			}
+			return $weight_num . ' kg';
+		}
+	} elseif ( 'g' === $unit || 'gm' === $unit ) {
+		if ( $weight_num < 1000 ) {
+			if ( (float) (int) $weight_num === (float) $weight_num ) {
+				$weight_num = (int) $weight_num;
+			}
+			return $weight_num . ' gm';
+		} else {
+			$kg = round( $weight_num / 1000, 2 );
+			if ( (float) (int) $kg === (float) $kg ) {
+				$kg = (int) $kg;
+			}
+			return $kg . ' kg';
+		}
+	}
+
+	return $weight_num . ' ' . $unit;
+}
+
+/**
+ * Format a weight/pack string (e.g. from attributes, variations, or tags).
+ * Converts weights < 1 kg into 'gm' (e.g. "0.5 kg" -> "500 gm", "250 g" -> "250 gm").
+ * Leaves liquids and non-weight pack descriptions intact.
+ *
+ * @param string $str
+ * @return string
+ */
+function agro_aura_format_weight_string( $str ) {
+	$str = trim( (string) $str );
+	if ( '' === $str ) {
+		return '';
+	}
+
+	if ( is_numeric( $str ) ) {
+		return agro_aura_format_weight( (float) $str );
+	}
+
+	// Single weight: e.g. "0.5 kg", "0.25kg", "500 g", "250gm"
+	if ( preg_match( '/^([\d\.]+)\s*(kg|g|gm)$/i', $str, $matches ) ) {
+		$val  = (float) $matches[1];
+		$unit = strtolower( $matches[2] );
+		return agro_aura_format_weight( $val, $unit );
+	}
+
+	// Multi-pack weight: e.g. "2 x 0.5 kg", "4 x 250 g"
+	if ( preg_match( '/^(\d+)\s*([xX*])\s*([\d\.]+)\s*(kg|g|gm)$/i', $str, $matches ) ) {
+		$count            = $matches[1];
+		$x_op             = $matches[2];
+		$val              = (float) $matches[3];
+		$unit             = strtolower( $matches[4] );
+		$formatted_single = agro_aura_format_weight( $val, $unit );
+		return $count . ' ' . $x_op . ' ' . $formatted_single;
+	}
+
+	return $str;
+}
+
+/**
+ * WooCommerce filter to format weight strings across native functions (e.g. Additional Information tab).
+ */
+function agro_aura_woocommerce_format_weight( $weight_string, $weight ) {
+	$formatted = agro_aura_format_weight( $weight );
+	return ! empty( $formatted ) ? $formatted : $weight_string;
+}
+add_filter( 'woocommerce_format_weight', 'agro_aura_woocommerce_format_weight', 20, 2 );
+
+/**
  * Dynamic helper to get size, volume, weight, or pack attribute for any WooCommerce product.
  * Supports custom product attributes (e.g. Volume: "90 ml"), taxonomies (pa_weight, pa_size, pa_volume),
  * and WooCommerce native weight.
@@ -216,12 +312,17 @@ function agro_aura_get_product_display_size( $product ) {
 		}
 	}
 
+	// Format size label if it contains weight units (< 1kg -> gm)
+	if ( ! empty( $size_label ) ) {
+		$size_label = agro_aura_format_weight_string( $size_label );
+	}
+
 	// 2. If no attribute found, check WooCommerce native weight
 	if ( empty( $size_label ) && $product->has_weight() ) {
 		$weight = (float) $product->get_weight();
 		$unit   = get_option( 'woocommerce_weight_unit', 'kg' );
 		if ( $weight > 0 ) {
-			$size_label = $weight . ' ' . $unit;
+			$size_label = agro_aura_format_weight( $weight, $unit );
 			$attr_title = __( 'Weight', 'storefront-child' );
 		}
 	}
