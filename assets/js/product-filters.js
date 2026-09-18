@@ -112,67 +112,67 @@
                 body: formData,
                 signal: activeController.signal
             })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (result) {
-                mainContent.classList.remove('is-loading');
-
-                if (result && result.success && result.data) {
-                    var data = result.data;
-
-                    // 1. Update Products Grid
-                    productsGrid.innerHTML = data.html;
-
-                    // 2. Update Result Count Text
-                    if (resultCountEl && data.result_count_text) {
-                        resultCountEl.innerHTML = data.result_count_text;
-                    }
-
-                    // 3. Update Pagination
-                    var paginationWrap = document.getElementById('agro-shop-pagination');
-                    if (!paginationWrap && mainContent) {
-                        paginationWrap = mainContent.querySelector('.storefront-sorting');
-                    }
-                    if (!paginationWrap && mainContent) {
-                        paginationWrap = mainContent.querySelector('.woocommerce-pagination');
-                    }
-
-                    if (paginationWrap) {
-                        paginationWrap.innerHTML = data.pagination_html || '';
-                    } else if (data.pagination_html && productsGrid) {
-                        paginationWrap = document.createElement('div');
-                        paginationWrap.id = 'agro-shop-pagination';
-                        paginationWrap.className = 'agro-pagination-wrap';
-                        paginationWrap.innerHTML = data.pagination_html;
-                        productsGrid.parentNode.insertBefore(paginationWrap, productsGrid.nextSibling);
-                    }
-
-                    // 4. Update Active Chips
-                    renderActiveChips(data.chips || []);
-
-                    // 5. Update Price Counts if returned
-                    if (data.price_counts) {
-                        updatePriceCountBadges(data.price_counts);
-                    }
-
-                    // 6. Update Pack Counts if returned
-                    if (data.pack_counts) {
-                        updatePackCountBadges(data.pack_counts);
-                    }
-
-                    // 7. Update URL in browser history without reload
-                    if (updateUrl !== false && data.url) {
-                        window.history.pushState({ agroFilter: true, paged: currentPage }, '', data.url);
-                    }
-                }
-            })
-            .catch(function (err) {
-                if (err.name !== 'AbortError') {
-                    console.error('Agro Aura filter error:', err);
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (result) {
                     mainContent.classList.remove('is-loading');
-                }
-            });
+
+                    if (result && result.success && result.data) {
+                        var data = result.data;
+
+                        // 1. Update Products Grid
+                        productsGrid.innerHTML = data.html;
+
+                        // 2. Update Result Count Text
+                        if (resultCountEl && data.result_count_text) {
+                            resultCountEl.innerHTML = data.result_count_text;
+                        }
+
+                        // 3. Update Pagination
+                        var paginationWrap = document.getElementById('agro-shop-pagination');
+                        if (!paginationWrap && mainContent) {
+                            paginationWrap = mainContent.querySelector('.storefront-sorting');
+                        }
+                        if (!paginationWrap && mainContent) {
+                            paginationWrap = mainContent.querySelector('.woocommerce-pagination');
+                        }
+
+                        if (paginationWrap) {
+                            paginationWrap.innerHTML = data.pagination_html || '';
+                        } else if (data.pagination_html && productsGrid) {
+                            paginationWrap = document.createElement('div');
+                            paginationWrap.id = 'agro-shop-pagination';
+                            paginationWrap.className = 'agro-pagination-wrap';
+                            paginationWrap.innerHTML = data.pagination_html;
+                            productsGrid.parentNode.insertBefore(paginationWrap, productsGrid.nextSibling);
+                        }
+
+                        // 4. Update Active Chips
+                        renderActiveChips(data.chips || []);
+
+                        // 5. Update Price Counts if returned
+                        if (data.price_counts) {
+                            updatePriceCountBadges(data.price_counts);
+                        }
+
+                        // 6. Update Pack Counts if returned
+                        if (data.pack_counts) {
+                            updatePackCountBadges(data.pack_counts);
+                        }
+
+                        // 7. Update URL in browser history without reload
+                        if (updateUrl !== false && data.url) {
+                            window.history.pushState({ agroFilter: true, paged: currentPage }, '', data.url);
+                        }
+                    }
+                })
+                .catch(function (err) {
+                    if (err.name !== 'AbortError') {
+                        console.error('Agro Aura filter error:', err);
+                        mainContent.classList.remove('is-loading');
+                    }
+                });
         }
 
         // Render Active Chips in Top Bar
@@ -242,11 +242,11 @@
                         return;
                     }
                     var hasActive = group.querySelector('.is-active, input[type="checkbox"]:checked, .pack-pill-btn.is-active');
-                    if (hasActive || idx === 0) {
-                        group.classList.add('is-open');
-                    } else {
-                        group.classList.remove('is-open');
-                    }
+                    // if (hasActive || idx === 0) {
+                    //     group.classList.add('is-open');
+                    // } else {
+                    //     group.classList.remove('is-open');
+                    // }
                 });
             } else {
                 sidebar.querySelectorAll('.filter-group').forEach(function (group) {
