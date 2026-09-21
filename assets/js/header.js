@@ -2,6 +2,29 @@
  * Header and Mobile Side Drawer interactions
  */
 document.addEventListener('DOMContentLoaded', function () {
+    // Dismiss Top Announcement Header Bar
+    const topHeaderCloseBtn = document.querySelector('.site-top-header-close');
+    if (topHeaderCloseBtn) {
+        topHeaderCloseBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const topHeader = this.closest('.site-top-header');
+            if (topHeader) {
+                topHeader.style.transition = 'opacity 0.2s ease, max-height 0.25s ease, padding 0.25s ease';
+                topHeader.style.overflow = 'hidden';
+                topHeader.style.maxHeight = topHeader.offsetHeight + 'px';
+                requestAnimationFrame(function () {
+                    topHeader.style.opacity = '0';
+                    topHeader.style.maxHeight = '0';
+                    topHeader.style.paddingTop = '0';
+                    topHeader.style.paddingBottom = '0';
+                });
+                setTimeout(function () {
+                    topHeader.remove();
+                }, 250);
+            }
+        });
+    }
+
     const toggleBtn = document.querySelector('.agro-mobile-menu-toggle');
     const closeBtn = document.querySelector('.drawer-close');
     const drawer = document.getElementById('agro-side-drawer');

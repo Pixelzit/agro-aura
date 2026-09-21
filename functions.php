@@ -71,6 +71,11 @@ function storefront_child_enqueue_styles() {
 			true
 		);
 	}
+
+	if ( is_shop() || is_product_taxonomy() || $is_product_search ) {
+		wp_enqueue_style( 'agro-product-filters' );
+		wp_enqueue_script( 'agro-product-filters-js' );
+	}
 }
 add_action( 'wp_enqueue_scripts', 'storefront_child_enqueue_styles', 20 );
 

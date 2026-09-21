@@ -10,6 +10,7 @@
 
 // 1. Top Offer Header Bar
 .site-top-header {
+    position: relative;
     background-color: var(--text-dark);
     color: var(--white-color);
     text-align: center;
@@ -21,6 +22,47 @@
 
     .site-container {
         display: block;
+    }
+
+    .site-top-header-close {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        padding: 6px;
+        margin: 0;
+        color: var(--white-color);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.75;
+        line-height: 1;
+        border-radius: 50%;
+        transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+
+        @media (min-width: 1024px) {
+            right: 24px;
+        }
+
+        &:hover {
+            opacity: 1;
+            background-color: rgba(255, 255, 255, 0.12);
+            transform: translateY(-50%) scale(1.08);
+        }
+
+        &:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, 0.6);
+        }
+
+        svg {
+            display: block;
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+        }
     }
 }
 

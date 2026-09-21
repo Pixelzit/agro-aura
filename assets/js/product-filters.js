@@ -19,12 +19,19 @@
         var nonce = ajaxConfig.nonce || (sidebar ? sidebar.getAttribute('data-nonce') : '');
         var shopUrl = ajaxConfig.shopUrl || (sidebar ? sidebar.getAttribute('data-shop-url') : '/shop/');
 
-        // Filter state
+        // Filter & Pagination state
         var activeCategory = (sidebar && sidebar.getAttribute('data-current-cat')) ? sidebar.getAttribute('data-current-cat') : 'all';
         var selectedPriceRanges = [];
         var selectedPackSize = '';
         var currentOrderby = orderbySelect ? orderbySelect.value : 'menu_order';
-        var currentPage = 1;
+        var currentPage = (mainContent && mainContent.dataset.currentPage) ? parseInt(mainContent.dataset.currentPage, 10) : 1;
+        var maxPages = (mainContent && mainContent.dataset.maxPages) ? parseInt(mainContent.dataset.maxPages, 10) : 1;
+        var isLoadingMore = false;
+        var infiniteObserver = null;
+
+        var infiniteStatus = document.getElementById('agro-infinite-scroll-status');
+        var infiniteLoader = infiniteStatus ? infiniteStatus.querySelector('.agro-infinite-loader') : null;
+        var infiniteEnd = infiniteStatus ? infiniteStatus.querySelector('.agro-infinite-end') : null;
 
         var activeController = null;
 
@@ -57,33 +64,187 @@
                 currentOrderby = orderbySelect.value;
             }
 
-            // 5. Initial Page from URL
-            var urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('paged')) {
-                currentPage = parseInt(urlParams.get('paged'), 10) || 1;
-            } else if (urlParams.has('product-page')) {
-                currentPage = parseInt(urlParams.get('product-page'), 10) || 1;
+            // 5. Initial Page from URL or dataset
+            if (mainContent && mainContent.dataset.currentPage) {
+                currentPage = parseInt(mainContent.dataset.currentPage, 10) || 1;
             } else {
-                var pathMatch = window.location.pathname.match(/page\/([0-9]+)/i);
-                if (pathMatch && pathMatch[1]) {
-                    currentPage = parseInt(pathMatch[1], 10) || 1;
+                var urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('paged')) {
+                    currentPage = parseInt(urlParams.get('paged'), 10) || 1;
+                } else if (urlParams.has('product-page')) {
+                    currentPage = parseInt(urlParams.get('product-page'), 10) || 1;
                 } else {
-                    currentPage = 1;
+                    var pathMatch = window.location.pathname.match(/page\/([0-9]+)/i);
+                    if (pathMatch && pathMatch[1]) {
+                        currentPage = parseInt(pathMatch[1], 10) || 1;
+                    } else {
+                        currentPage = 1;
+                    }
                 }
+            }
+
+            if (mainContent && mainContent.dataset.maxPages) {
+                maxPages = parseInt(mainContent.dataset.maxPages, 10) || 1;
             }
         }
 
         syncInitialState();
 
-        // Core AJAX Filter Function
+        // Infinite Scroll: Load Next Page on Scroll
+        function loadNextPage() {
+            if (isLoadingMore || currentPage >= maxPages || !productsGrid) {
+                return;
+            }
+
+            var nextPage = currentPage + 1;
+            isLoadingMore = true;
+
+            if (infiniteLoader) {
+                infiniteLoader.style.display = 'inline-flex';
+            }
+            if (infiniteEnd) {
+                infiniteEnd.style.display = 'none';
+            }
+
+            var formData = new FormData();
+            formData.append('action', 'agro_filter_products');
+            formData.append('nonce', nonce);
+            formData.append('category', activeCategory);
+            formData.append('pack_size', selectedPackSize);
+            formData.append('orderby', currentOrderby);
+            formData.append('paged', nextPage);
+
+            for (var i = 0; i < selectedPriceRanges.length; i++) {
+                formData.append('price_ranges[]', selectedPriceRanges[i]);
+            }
+
+            fetch(ajaxUrl, {
+                method: 'POST',
+                body: formData
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (result) {
+                    isLoadingMore = false;
+                    if (infiniteLoader) {
+                        infiniteLoader.style.display = 'none';
+                    }
+
+                    if (result && result.success && result.data) {
+                        var data = result.data;
+                        currentPage = parseInt(data.current_page, 10) || nextPage;
+                        maxPages = parseInt(data.max_pages, 10) || maxPages;
+
+                        // Append newly fetched products to current grid
+                        if (data.html) {
+                            var tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = data.html;
+                            var items = tempDiv.querySelectorAll('li.product, .agro-product-card-item');
+
+                            if (items.length > 0) {
+                                items.forEach(function (item) {
+                                    productsGrid.appendChild(item);
+                                });
+                            } else if (!tempDiv.querySelector('.agro-no-products-found')) {
+                                productsGrid.insertAdjacentHTML('beforeend', data.html);
+                            }
+                        }
+
+                        // Update Result Count text smoothly: "Showing 1–X of Y fresh products"
+                        if (resultCountEl && data.found_posts) {
+                            var perPage = (mainContent && mainContent.dataset.perPage) ? parseInt(mainContent.dataset.perPage, 10) : 12;
+                            var end = Math.min(currentPage * perPage, data.found_posts);
+                            resultCountEl.innerHTML = 'Showing <strong>1–' + end + '</strong> of <strong>' + data.found_posts + '</strong> fresh products';
+                        }
+
+                        // Update URL silently in browser history without page jump
+                        if (data.url) {
+                            window.history.replaceState({ agroFilter: true, paged: currentPage }, '', data.url);
+                        }
+
+                        // Check if all pages are loaded
+                        if (currentPage >= maxPages) {
+                            if (infiniteEnd) {
+                                infiniteEnd.style.display = 'inline-flex';
+                            }
+                            if (infiniteObserver && infiniteStatus) {
+                                infiniteObserver.unobserve(infiniteStatus);
+                            }
+                        }
+                    }
+                })
+                .catch(function (err) {
+                    isLoadingMore = false;
+                    if (infiniteLoader) {
+                        infiniteLoader.style.display = 'none';
+                    }
+                    console.error('Agro Aura infinite scroll error:', err);
+                });
+        }
+
+        // Setup Sentinel Observer for Infinite Scroll
+        function observeSentinel() {
+            if (!infiniteStatus) {
+                infiniteStatus = document.getElementById('agro-infinite-scroll-status');
+                if (infiniteStatus) {
+                    infiniteLoader = infiniteStatus.querySelector('.agro-infinite-loader');
+                    infiniteEnd = infiniteStatus.querySelector('.agro-infinite-end');
+                }
+            }
+            if (!infiniteStatus) return;
+
+            if (infiniteObserver) {
+                infiniteObserver.disconnect();
+            }
+
+            if (currentPage >= maxPages) {
+                if (infiniteEnd && maxPages > 0) {
+                    infiniteEnd.style.display = 'inline-flex';
+                }
+                return;
+            }
+
+            if ('IntersectionObserver' in window) {
+                infiniteObserver = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            if (!isLoadingMore && currentPage < maxPages) {
+                                loadNextPage();
+                            }
+                        }
+                    });
+                }, {
+                    root: null,
+                    rootMargin: '400px 0px',
+                    threshold: 0.01
+                });
+
+                infiniteObserver.observe(infiniteStatus);
+            } else {
+                // Fallback scroll listener
+                window.addEventListener('scroll', function () {
+                    if (isLoadingMore || currentPage >= maxPages || !infiniteStatus) return;
+                    var rect = infiniteStatus.getBoundingClientRect();
+                    if (rect.top <= window.innerHeight + 400) {
+                        loadNextPage();
+                    }
+                }, { passive: true });
+            }
+        }
+
+        observeSentinel();
+
+        // Core AJAX Filter Function (resets grid to page 1 with new filter params)
         function executeFilter(updateUrl, page) {
             if (!mainContent || !productsGrid) {
-                // If sidebar is outside shop layout, fallback to redirect
                 return;
             }
 
             if (typeof page !== 'undefined' && page !== null) {
                 currentPage = parseInt(page, 10) || 1;
+            } else {
+                currentPage = 1;
             }
 
             // Abort previous pending request
@@ -121,7 +282,7 @@
                     if (result && result.success && result.data) {
                         var data = result.data;
 
-                        // 1. Update Products Grid
+                        // 1. Reset Products Grid with new page 1 results
                         productsGrid.innerHTML = data.html;
 
                         // 2. Update Result Count Text
@@ -129,39 +290,39 @@
                             resultCountEl.innerHTML = data.result_count_text;
                         }
 
-                        // 3. Update Pagination
-                        var paginationWrap = document.getElementById('agro-shop-pagination');
-                        if (!paginationWrap && mainContent) {
-                            paginationWrap = mainContent.querySelector('.storefront-sorting');
+                        // 3. Update state
+                        currentPage = parseInt(data.current_page, 10) || 1;
+                        maxPages = parseInt(data.max_pages, 10) || 1;
+
+                        // 4. Reset Infinite Scroll Status
+                        if (infiniteLoader) {
+                            infiniteLoader.style.display = 'none';
                         }
-                        if (!paginationWrap && mainContent) {
-                            paginationWrap = mainContent.querySelector('.woocommerce-pagination');
+                        if (infiniteEnd) {
+                            if (maxPages <= 1 && data.found_posts > 0) {
+                                infiniteEnd.style.display = 'inline-flex';
+                            } else {
+                                infiniteEnd.style.display = 'none';
+                            }
                         }
 
-                        if (paginationWrap) {
-                            paginationWrap.innerHTML = data.pagination_html || '';
-                        } else if (data.pagination_html && productsGrid) {
-                            paginationWrap = document.createElement('div');
-                            paginationWrap.id = 'agro-shop-pagination';
-                            paginationWrap.className = 'agro-pagination-wrap';
-                            paginationWrap.innerHTML = data.pagination_html;
-                            productsGrid.parentNode.insertBefore(paginationWrap, productsGrid.nextSibling);
-                        }
+                        // Reconnect observer for infinite scrolling on new query
+                        observeSentinel();
 
-                        // 4. Update Active Chips
+                        // 5. Update Active Chips
                         renderActiveChips(data.chips || []);
 
-                        // 5. Update Price Counts if returned
+                        // 6. Update Price Counts if returned
                         if (data.price_counts) {
                             updatePriceCountBadges(data.price_counts);
                         }
 
-                        // 6. Update Pack Counts if returned
+                        // 7. Update Pack Counts if returned
                         if (data.pack_counts) {
                             updatePackCountBadges(data.pack_counts);
                         }
 
-                        // 7. Update URL in browser history without reload
+                        // 8. Update URL in browser history without reload
                         if (updateUrl !== false && data.url) {
                             window.history.pushState({ agroFilter: true, paged: currentPage }, '', data.url);
                         }

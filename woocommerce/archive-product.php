@@ -38,10 +38,26 @@ $has_products = woocommerce_product_loop();
 		</aside>
 	<?php endif; ?>
 
+	<?php
+	global $wp_query;
+	$total_products = $wp_query->found_posts;
+	$paged          = max( 1, get_query_var( 'paged' ) );
+	$per_page       = apply_filters( 'loop_shop_per_page', wc_get_default_products_per_row() * wc_get_default_product_rows_per_page() );
+	$start          = ( $paged - 1 ) * $per_page + 1;
+	$end            = min( $paged * $per_page, $total_products );
+	$max_pages      = $wp_query->max_num_pages;
+	?>
+
 	<!-- ========================================== -->
 	<!-- 2. RIGHT COLUMN: MAIN PRODUCTS CONTENT     -->
 	<!-- ========================================== -->
-	<div class="agro-shop-main-content<?php echo ! $has_products ? ' full-width' : ''; ?>">
+	<div 
+		class="agro-shop-main-content<?php echo ! $has_products ? ' full-width' : ''; ?>"
+		data-max-pages="<?php echo esc_attr( $max_pages ); ?>"
+		data-current-page="<?php echo esc_attr( $paged ); ?>"
+		data-total-products="<?php echo esc_attr( $total_products ); ?>"
+		data-per-page="<?php echo esc_attr( $per_page ); ?>"
+	>
 		<div class="agro-shop-loader-spinner" aria-hidden="true"></div>
 
 		<?php if ( $has_products ) : ?>
@@ -49,13 +65,6 @@ $has_products = woocommerce_product_loop();
 			<div class="agro-shop-top-bar">
 				<div class="shop-result-count">
 					<?php
-					global $wp_query;
-					$total_products = $wp_query->found_posts;
-					$paged          = max( 1, get_query_var( 'paged' ) );
-					$per_page       = apply_filters( 'loop_shop_per_page', wc_get_default_products_per_row() * wc_get_default_product_rows_per_page() );
-					$start          = ( $paged - 1 ) * $per_page + 1;
-					$end            = min( $paged * $per_page, $total_products );
-
 					if ( $total_products > 0 ) {
 						echo 'Showing <strong>' . esc_html( $start ) . '–' . esc_html( $end ) . '</strong> of <strong>' . esc_html( $total_products ) . '</strong> fresh products';
 					} else {
@@ -96,7 +105,20 @@ $has_products = woocommerce_product_loop();
 				}
 				?>
 			</ul>
-			<div class="agro-pagination-wrap" id="agro-shop-pagination">
+
+			<!-- Infinite Scroll Sentinel & Status -->
+			<div class="agro-infinite-scroll-status" id="agro-infinite-scroll-status" data-max-pages="<?php echo esc_attr( $max_pages ); ?>">
+				<div class="agro-infinite-loader" style="display: none;">
+					<span class="agro-infinite-spinner"></span>
+					<span class="agro-infinite-text"><?php esc_html_e( 'Loading more products...', 'storefront-child' ); ?></span>
+				</div>
+				<div class="agro-infinite-end" style="<?php echo ( $max_pages <= 1 && $total_products > 0 ) ? 'display: inline-flex;' : 'display: none;'; ?>">
+					<span><?php esc_html_e( 'You have reached the end of the products', 'storefront-child' ); ?></span>
+				</div>
+			</div>
+
+			<!-- Fallback Pagination (hidden during infinite scroll) -->
+			<div class="agro-pagination-wrap" id="agro-shop-pagination" style="display: none;">
 				<?php
 				/**
 				 * Hook: woocommerce_after_shop_loop.
