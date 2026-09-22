@@ -2,8 +2,8 @@
 /**
  * Login & Registration Form Override
  *
- * Supports registration and login via Mobile Phone Number OR Email Address,
- * allowing users to set their own password directly during signup.
+ * Supports toggle between Login and Registration forms with user-chosen password
+ * and Mobile Phone Number or Email Address.
  *
  * @package Storefront_Child
  * @version 9.9.0
@@ -13,13 +13,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-do_action( 'woocommerce_before_customer_login_form' ); ?>
+do_action( 'woocommerce_before_customer_login_form' );
+
+$show_register_initial = isset( $_POST['register'] ) || ( isset( $_GET['action'] ) && 'register' === $_GET['action'] );
+?>
 
 <?php if ( 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) ) : ?>
 
-<div class="u-columns col2-set" id="customer_login">
+<div class="u-columns col2-set auth-toggle-layout" id="customer_login">
 
-	<div class="u-column1 col-1">
+	<div class="u-column1 col-1" id="agro_aura_login_box" <?php echo $show_register_initial ? 'style="display: none;"' : ''; ?>>
 
 <?php endif; ?>
 
@@ -40,10 +43,13 @@ do_action( 'woocommerce_before_customer_login_form' ); ?>
 
 			<?php do_action( 'woocommerce_login_form' ); ?>
 
-			<p class="form-row">
+			<p class="form-row rememberme-lostpassword">
 				<label class="woocommerce-form__label woocommerce-form__label-for-checkbox woocommerce-form-login__rememberme">
 					<input class="woocommerce-form__input woocommerce-form__input-checkbox" name="rememberme" type="checkbox" id="rememberme" value="forever" /> <span><?php esc_html_e( 'Remember me', 'woocommerce' ); ?></span>
 				</label>
+			</p>
+
+			<p class="form-row">
 				<?php wp_nonce_field( 'woocommerce-login', 'woocommerce-login-nonce' ); ?>
 				<button type="submit" class="woocommerce-button button woocommerce-form-login__submit<?php echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); ?>" name="login" value="<?php esc_attr_e( 'Log in', 'woocommerce' ); ?>"><?php esc_html_e( 'Log in', 'woocommerce' ); ?></button>
 			</p>
@@ -55,13 +61,22 @@ do_action( 'woocommerce_before_customer_login_form' ); ?>
 
 		</form>
 
+		<?php if ( 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) ) : ?>
+			<div class="agro-aura-auth-switch">
+				<p>
+					<?php esc_html_e( "Don't have an account?", 'storefront-child' ); ?>
+					<a href="#register" class="agro-switch-to-register"><?php esc_html_e( 'Create New Account', 'storefront-child' ); ?></a>
+				</p>
+			</div>
+		<?php endif; ?>
+
 <?php if ( 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) ) : ?>
 
 	</div>
 
-	<div class="u-column2 col-2">
+	<div class="u-column2 col-2" id="agro_aura_register_box" <?php echo ! $show_register_initial ? 'style="display: none;"' : ''; ?>>
 
-		<h2><?php esc_html_e( 'Register', 'woocommerce' ); ?></h2>
+		<h2><?php esc_html_e( 'Create Account', 'storefront-child' ); ?></h2>
 
 		<form method="post" class="woocommerce-form woocommerce-form-register register" <?php do_action( 'woocommerce_register_form_tag' ); ?> >
 
@@ -90,16 +105,76 @@ do_action( 'woocommerce_before_customer_login_form' ); ?>
 
 			<p class="woocommerce-form-row form-row">
 				<?php wp_nonce_field( 'woocommerce-register', 'woocommerce-register-nonce' ); ?>
-				<button type="submit" class="woocommerce-Button woocommerce-button button<?php echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); ?> woocommerce-form-register__submit" name="register" value="<?php esc_attr_e( 'Register', 'woocommerce' ); ?>"><?php esc_html_e( 'Register', 'woocommerce' ); ?></button>
+				<button type="submit" class="woocommerce-Button woocommerce-button button<?php echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); ?> woocommerce-form-register__submit" name="register" value="<?php esc_attr_e( 'Register', 'woocommerce' ); ?>"><?php esc_html_e( 'Create Account', 'storefront-child' ); ?></button>
 			</p>
 
 			<?php do_action( 'woocommerce_register_form_end' ); ?>
 
 		</form>
 
+		<div class="agro-aura-auth-switch">
+			<p>
+				<?php esc_html_e( 'Already have an account?', 'storefront-child' ); ?>
+				<a href="#login" class="agro-switch-to-login"><?php esc_html_e( 'Log In', 'storefront-child' ); ?></a>
+			</p>
+		</div>
+
 	</div>
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	var loginBox = document.getElementById('agro_aura_login_box');
+	var registerBox = document.getElementById('agro_aura_register_box');
+	if (!loginBox || !registerBox) return;
+
+	function showRegisterForm() {
+		loginBox.style.display = 'none';
+		registerBox.style.display = 'block';
+	}
+
+	function showLoginForm() {
+		registerBox.style.display = 'none';
+		loginBox.style.display = 'block';
+	}
+
+	document.addEventListener('click', function(e) {
+		var regTrigger = e.target.closest('.agro-switch-to-register');
+		if (regTrigger) {
+			e.preventDefault();
+			if (history.pushState) {
+				history.pushState(null, null, '#register');
+			}
+			showRegisterForm();
+			return;
+		}
+
+		var loginTrigger = e.target.closest('.agro-switch-to-login, .showlogin');
+		if (loginTrigger) {
+			e.preventDefault();
+			if (history.pushState) {
+				history.pushState(null, null, '#login');
+			}
+			showLoginForm();
+			return;
+		}
+	});
+
+	if (window.location.hash === '#register') {
+		showRegisterForm();
+	}
+
+	window.addEventListener('hashchange', function() {
+		if (window.location.hash === '#register') {
+			showRegisterForm();
+		} else {
+			showLoginForm();
+		}
+	});
+});
+</script>
+
 <?php endif; ?>
 
 <?php do_action( 'woocommerce_after_customer_login_form' ); ?>
