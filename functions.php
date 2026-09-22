@@ -110,6 +110,7 @@ require_once get_stylesheet_directory() . '/inc/custom-widgets.php';
  * Custom WooCommerce hooks and template functions
  */
 require_once get_stylesheet_directory() . '/inc/woocommerce/custom-storefront-woocommerce.php';
+require_once get_stylesheet_directory() . '/inc/woocommerce/phone-registration-login.php';
 
 /**
  * Custom Shortcodes
