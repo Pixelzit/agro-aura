@@ -331,9 +331,14 @@ body.woocommerce-cart {
                 margin: 16px 0;
 
                 .wc-block-components-totals-coupon__button {
-                    color: var(--primary-color);
+                    color: var(--white-color);
+                    background: var(--primary-color);
                     font-weight: 700;
                     font-size: 13.5px;
+
+                    .wc-block-components-button__text {
+                        opacity: 1 !important;
+                    }
                 }
 
                 .wc-block-components-totals-coupon-form {

@@ -83,33 +83,36 @@ if ( ! function_exists( 'storefront_credit' ) ) {
 }
 
 
-/**
- * Adjust header hooks to prevent duplicate branding, search, cart, and navigation.
- */
-function storefront_child_adjust_header_hooks() {
-	remove_action( 'storefront_header', 'storefront_header_container', 0 );
-	remove_action( 'storefront_header', 'storefront_site_branding', 20 );
-	remove_action( 'storefront_header', 'storefront_product_search', 40 );
-	remove_action( 'storefront_header', 'storefront_header_container_close', 41 );
-	remove_action( 'storefront_header', 'storefront_primary_navigation_wrapper', 42 );
-	remove_action( 'storefront_header', 'storefront_primary_navigation', 50 );
-	remove_action( 'storefront_header', 'storefront_header_cart', 60 );
-	remove_action( 'storefront_header', 'storefront_primary_navigation_wrapper_close', 68 );
-	remove_action( 'storefront_footer', 'storefront_handheld_footer_bar', 999 );
+if ( ! function_exists( 'storefront_child_adjust_header_hooks' ) ) {
+	/**
+	 * Adjust header hooks to prevent duplicate branding, search, cart, and navigation.
+	 */
+	function storefront_child_adjust_header_hooks() {
+		remove_action( 'storefront_header', 'storefront_header_container', 0 );
+		remove_action( 'storefront_header', 'storefront_site_branding', 20 );
+		remove_action( 'storefront_header', 'storefront_product_search', 40 );
+		remove_action( 'storefront_header', 'storefront_header_container_close', 41 );
+		remove_action( 'storefront_header', 'storefront_primary_navigation_wrapper', 42 );
+		remove_action( 'storefront_header', 'storefront_primary_navigation', 50 );
+		remove_action( 'storefront_header', 'storefront_header_cart', 60 );
+		remove_action( 'storefront_header', 'storefront_primary_navigation_wrapper_close', 68 );
+		remove_action( 'storefront_footer', 'storefront_handheld_footer_bar', 999 );
 
-	// Remove duplicate ordering and result count from after_shop_loop (bottom storefront-sorting)
-	remove_action( 'woocommerce_after_shop_loop', 'woocommerce_catalog_ordering', 10 );
-	remove_action( 'woocommerce_after_shop_loop', 'woocommerce_result_count', 20 );
+		// Remove duplicate ordering and result count from after_shop_loop (bottom storefront-sorting)
+		remove_action( 'woocommerce_after_shop_loop', 'woocommerce_catalog_ordering', 10 );
+		remove_action( 'woocommerce_after_shop_loop', 'woocommerce_result_count', 20 );
+	}
+	add_action( 'init', 'storefront_child_adjust_header_hooks' );
 }
-add_action( 'init', 'storefront_child_adjust_header_hooks' );
 
-
-/**
- * Replace col-full with site-container in WooCommerce breadcrumbs.
- */
-function agro_aura_woocommerce_breadcrumbs( $defaults ) {
-	$defaults['wrap_before'] = '<div class="storefront-breadcrumb"><div class="site-container"><nav class="woocommerce-breadcrumb" aria-label="' . esc_attr__( 'breadcrumbs', 'storefront' ) . '">';
-	$defaults['wrap_after']  = '</nav></div></div>';
-	return $defaults;
+if ( ! function_exists( 'agro_aura_woocommerce_breadcrumbs' ) ) {
+	/**
+	 * Replace col-full with site-container in WooCommerce breadcrumbs.
+	 */
+	function agro_aura_woocommerce_breadcrumbs( $defaults ) {
+		$defaults['wrap_before'] = '<div class="storefront-breadcrumb"><div class="site-container"><nav class="woocommerce-breadcrumb" aria-label="' . esc_attr__( 'breadcrumbs', 'storefront' ) . '">';
+		$defaults['wrap_after']  = '</nav></div></div>';
+		return $defaults;
+	}
+	add_filter( 'woocommerce_breadcrumb_defaults', 'agro_aura_woocommerce_breadcrumbs', 20 );
 }
-add_filter( 'woocommerce_breadcrumb_defaults', 'agro_aura_woocommerce_breadcrumbs', 20 );
