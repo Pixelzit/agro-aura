@@ -161,8 +161,10 @@
 
 .footer-widget-1 {
     .widget_media_image {
+        max-width: 280px;
+
         img {
-            filter: invert(1) brightness(100);
+            // filter: invert(1) brightness(100);
         }
     }
 }
