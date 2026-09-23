@@ -340,48 +340,118 @@ if ( empty( $sku ) ) {
 			</div>
 		</form>
 
+		<?php
+		// Value Proposition Highlight Cards (ACF Dynamic)
+		$product_id         = $product->get_id();
+		$feature_highlights = function_exists( 'get_field' ) ? get_field( 'product_feature_highlights', $product_id ) : null;
+		$feature_cards      = array();
+
+		// Default configurations for fallbacks & styling
+		$default_features_config = array(
+			1 => array(
+				'class'       => 'icon-aged',
+				'default_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
+			),
+			2 => array(
+				'class'       => 'icon-polish',
+				'default_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15 9H22L16.5 13.5L18.5 21L12 16.5L5.5 21L7.5 13.5L2 9H9L12 2Z"></path></svg>',
+			),
+			3 => array(
+				'class'       => 'icon-aroma',
+				'default_svg' => '<svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z"></path></svg>',
+			),
+		);
+
+		for ( $i = 1; $i <= 3; $i++ ) {
+			$item_key  = 'product_feature_item_' . $i;
+			$item_data = null;
+
+			if ( ! empty( $feature_highlights[ $item_key ] ) && is_array( $feature_highlights[ $item_key ] ) ) {
+				$item_data = $feature_highlights[ $item_key ];
+			} elseif ( function_exists( 'get_field' ) ) {
+				$item_data = get_field( $item_key, $product_id );
+			}
+
+			// Fallback check directly in postmeta if needed
+			if ( empty( $item_data ) || ! is_array( $item_data ) ) {
+				$meta_icon  = get_post_meta( $product_id, "product_feature_highlights_{$item_key}_icon", true );
+				$meta_title = get_post_meta( $product_id, "product_feature_highlights_{$item_key}_title", true );
+				$meta_text  = get_post_meta( $product_id, "product_feature_highlights_{$item_key}_text", true );
+
+				if ( ! empty( $meta_title ) || ! empty( $meta_text ) || ! empty( $meta_icon ) ) {
+					$item_data = array(
+						'icon'  => $meta_icon,
+						'title' => $meta_title,
+						'text'  => $meta_text,
+					);
+				}
+			}
+
+			if ( ! empty( $item_data ) && is_array( $item_data ) ) {
+				$title = isset( $item_data['title'] ) ? trim( (string) $item_data['title'] ) : '';
+				$text  = isset( $item_data['text'] ) ? trim( (string) $item_data['text'] ) : '';
+				$icon  = isset( $item_data['icon'] ) ? $item_data['icon'] : null;
+
+				// Card is valid only if user has entered title, text, or icon
+				if ( ! empty( $title ) || ! empty( $text ) || ! empty( $icon ) ) {
+					$icon_url = '';
+					$icon_alt = ! empty( $title ) ? $title : get_the_title( $product_id );
+
+					if ( ! empty( $icon ) ) {
+						if ( is_array( $icon ) ) {
+							$icon_url = ! empty( $icon['url'] ) ? $icon['url'] : '';
+							if ( ! empty( $icon['alt'] ) ) {
+								$icon_alt = $icon['alt'];
+							}
+						} elseif ( is_numeric( $icon ) ) {
+							$icon_url = wp_get_attachment_image_url( $icon, 'thumbnail' );
+							$alt_meta = get_post_meta( $icon, '_wp_attachment_image_alt', true );
+							if ( ! empty( $alt_meta ) ) {
+								$icon_alt = $alt_meta;
+							}
+						} elseif ( is_string( $icon ) ) {
+							$icon_url = $icon;
+						}
+					}
+
+					$feature_cards[] = array(
+						'index'       => $i,
+						'title'       => $title,
+						'text'        => $text,
+						'icon_url'    => $icon_url,
+						'icon_alt'    => $icon_alt,
+						'class'       => $default_features_config[ $i ]['class'],
+						'default_svg' => $default_features_config[ $i ]['default_svg'],
+					);
+				}
+			}
+		}
+
+		if ( ! empty( $feature_cards ) ) :
+		?>
 		<!-- Value Proposition Highlight Cards -->
 		<div class="agro-feature-highlights">
-			<!-- Feature 1 -->
-			<div class="feature-card">
-				<div class="feature-icon icon-aged">
-					<svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<circle cx="12" cy="12" r="10"></circle>
-						<polyline points="12 6 12 12 16 14"></polyline>
-					</svg>
+			<?php foreach ( $feature_cards as $card ) : ?>
+				<div class="feature-card">
+					<div class="feature-icon <?php echo esc_attr( $card['class'] ); ?>">
+						<?php if ( ! empty( $card['icon_url'] ) ) : ?>
+							<img src="<?php echo esc_url( $card['icon_url'] ); ?>" alt="<?php echo esc_attr( $card['icon_alt'] ); ?>" />
+						<?php else : ?>
+							<?php echo $card['default_svg']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php endif; ?>
+					</div>
+					<div class="feature-text">
+						<?php if ( ! empty( $card['title'] ) ) : ?>
+							<span class="feature-title"><?php echo esc_html( $card['title'] ); ?></span>
+						<?php endif; ?>
+						<?php if ( ! empty( $card['text'] ) ) : ?>
+							<span class="feature-subtitle"><?php echo esc_html( $card['text'] ); ?></span>
+						<?php endif; ?>
+					</div>
 				</div>
-				<div class="feature-text">
-					<span class="feature-title">24M Aged</span>
-					<span class="feature-subtitle">Himalayan foothills</span>
-				</div>
-			</div>
-
-			<!-- Feature 2 -->
-			<div class="feature-card">
-				<div class="feature-icon icon-polish">
-					<svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M12 2L15 9H22L16.5 13.5L18.5 21L12 16.5L5.5 21L7.5 13.5L2 9H9L12 2Z"></path>
-					</svg>
-				</div>
-				<div class="feature-text">
-					<span class="feature-title">Zero Polish</span>
-					<span class="feature-subtitle">100% whole grain</span>
-				</div>
-			</div>
-
-			<!-- Feature 3 -->
-			<div class="feature-card">
-				<div class="feature-icon icon-aroma">
-					<svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z"></path>
-					</svg>
-				</div>
-				<div class="feature-text">
-					<span class="feature-title">Shahi Aroma</span>
-					<span class="feature-subtitle">Authentic fragrance</span>
-				</div>
-			</div>
+			<?php endforeach; ?>
 		</div>
+		<?php endif; ?>
 
 	</div><!-- .summary -->
 

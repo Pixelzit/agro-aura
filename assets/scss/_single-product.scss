@@ -418,7 +418,7 @@ body.single-product {
         // 5. Value Proposition Highlights (Feature Cards Grid)
         .agro-feature-highlights {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
             margin-top: 24px;
 
@@ -454,9 +454,11 @@ body.single-product {
                         background-color: #fee2e2;
                     }
 
-                    svg {
-                        width: 19px;
-                        height: 19px;
+                    svg,
+                    img {
+                        width: 20px;
+                        height: 20px;
+                        object-fit: contain;
                     }
                 }
 
