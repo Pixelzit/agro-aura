@@ -160,12 +160,14 @@ $avatar_url    = $current_user->exists() ? get_avatar_url( $current_user->ID, ar
 			</div>
 
 			<!-- Drawer Offer Notice -->
+			<?php if ( is_active_sidebar( 'header-top' ) ) : ?>	
 			<div class="drawer-footer">
 				<div class="drawer-offer">
-					<span class="offer-badge"><?php esc_html_e( 'First Order', 'storefront-child' ); ?></span>
-					<p><?php esc_html_e( '50% off up to Rs 200 credited in your Wallet!', 'storefront-child' ); ?></p>
+					<?php dynamic_sidebar( 'header-top' ); ?>
 				</div>
 			</div>
+			<?php endif; ?>
+
 		</div>
 		<div class="agro-drawer-backdrop" aria-hidden="true"></div>
 
