@@ -1083,15 +1083,13 @@ body.single-product {
     }
 
     .related {
-        &.products {
-            h2 {
-                font-size: 34px !important;
-                font-weight: 800 !important;
-                color: var(--text-dark) !important;
-                line-height: 1.18 !important;
-                letter-spacing: -0.5px !important;
-                text-align: left !important;
-            }
+        >h2 {
+            font-size: 34px !important;
+            font-weight: 800 !important;
+            color: var(--text-dark) !important;
+            line-height: 1.18 !important;
+            letter-spacing: -0.5px !important;
+            text-align: left !important;
         }
     }
 }
