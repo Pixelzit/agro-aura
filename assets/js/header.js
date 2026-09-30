@@ -1,6 +1,42 @@
 /**
  * Header, Mobile Side Drawer, and Real-Time Cart Synchronization
  */
+
+// Purge any stale WooCommerce cart fragments if cart is empty on initial load
+(function () {
+    try {
+        const cookieCountMatch = document.cookie.match(/(?:^|;\s*)woocommerce_items_in_cart=([0-9]+)/);
+        const cookieCount = cookieCountMatch ? parseInt(cookieCountMatch[1], 10) : 0;
+        const cookieHashMatch = document.cookie.match(/(?:^|;\s*)woocommerce_cart_hash=([^;]+)/);
+        const cookieHash = cookieHashMatch ? cookieHashMatch[1].trim() : '';
+
+        // If cookie explicitly says 0 items or no valid hash exists
+        if (cookieCount === 0 || !cookieHash) {
+            if (window.sessionStorage) {
+                const toRemove = [];
+                for (let i = 0; i < sessionStorage.length; i++) {
+                    const key = sessionStorage.key(i);
+                    if (key && (key.indexOf('wc_fragments') === 0 || key.indexOf('wc_cart_hash') === 0)) {
+                        toRemove.push(key);
+                    }
+                }
+                toRemove.forEach(function (k) { sessionStorage.removeItem(k); });
+                sessionStorage.removeItem('wc_cart_created');
+            }
+            if (window.localStorage) {
+                const toRemoveLocal = [];
+                for (let j = 0; j < localStorage.length; j++) {
+                    const keyLocal = localStorage.key(j);
+                    if (keyLocal && keyLocal.indexOf('wc_cart_hash') === 0) {
+                        toRemoveLocal.push(keyLocal);
+                    }
+                }
+                toRemoveLocal.forEach(function (k) { localStorage.removeItem(k); });
+            }
+        }
+    } catch (e) { }
+})();
+
 document.addEventListener('DOMContentLoaded', function () {
     // 1. Dismiss Top Announcement Header Bar
     const topHeaderCloseBtn = document.querySelector('.site-top-header-close');
@@ -184,16 +220,32 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     });
 
-                    // Synchronize WooCommerce sessionStorage cache to prevent stale restoration
+                    // Synchronize WooCommerce sessionStorage cache with exact keys
                     if (window.sessionStorage) {
                         try {
-                            const hashKey = (window.wc_cart_fragments_params && window.wc_cart_fragments_params.cart_hash_key) || 'wc_cart_hash';
-                            if (data.cart_hash) {
-                                sessionStorage.setItem(hashKey, data.cart_hash);
-                                sessionStorage.setItem('wc_fragments_' + hashKey, JSON.stringify(data.fragments));
+                            const fragmentName = (window.wc_cart_fragments_params && window.wc_cart_fragments_params.fragment_name) || 'wc_fragments';
+                            const cartHashKey = (window.wc_cart_fragments_params && window.wc_cart_fragments_params.cart_hash_key) || 'wc_cart_hash';
+                            const hash = (data && data.cart_hash) ? data.cart_hash : '';
+
+                            sessionStorage.setItem(fragmentName, JSON.stringify(data.fragments));
+                            sessionStorage.setItem(cartHashKey, hash);
+                            if (window.localStorage) {
+                                localStorage.setItem(cartHashKey, hash);
+                            }
+
+                            if (!hash) {
+                                // Cart is empty: purge all other stale fragment keys
+                                const toRemove = [];
+                                for (let i = 0; i < sessionStorage.length; i++) {
+                                    const k = sessionStorage.key(i);
+                                    if (k && k !== fragmentName && (k.indexOf('wc_fragments') === 0 || k.indexOf('wc_cart_hash') === 0)) {
+                                        toRemove.push(k);
+                                    }
+                                }
+                                toRemove.forEach(function (k) { sessionStorage.removeItem(k); });
+                                sessionStorage.removeItem('wc_cart_created');
                             } else {
-                                sessionStorage.removeItem(hashKey);
-                                sessionStorage.removeItem('wc_fragments_' + hashKey);
+                                sessionStorage.setItem('wc_cart_created', (new Date()).getTime().toString());
                             }
                         } catch (e) { }
                     }
@@ -236,6 +288,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const cartData = cartSelect.getCartData();
                     if (!cartData || !cartData.totals) return;
+
+                    // If cart is now empty, immediately clear cookie and storage
+                    if (cartData.items_count === 0) {
+                        document.cookie = 'woocommerce_items_in_cart=0; path=/; max-age=0';
+                        document.cookie = 'woocommerce_cart_hash=; path=/; max-age=0';
+                        if (window.sessionStorage) {
+                            const toRemove = [];
+                            for (let i = 0; i < sessionStorage.length; i++) {
+                                const k = sessionStorage.key(i);
+                                if (k && (k.indexOf('wc_fragments') === 0 || k.indexOf('wc_cart_hash') === 0)) {
+                                    toRemove.push(k);
+                                }
+                            }
+                            toRemove.forEach(function (k) { sessionStorage.removeItem(k); });
+                            sessionStorage.removeItem('wc_cart_created');
+                        }
+                    }
 
                     // Compute unique signature of current cart state
                     const currentHash = `${cartData.items_count}_${cartData.totals.total_items}_${cartData.totals.total_price}`;
@@ -310,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     /**
-     * Classic WooCommerce jQuery Events
+     * Classic WooCommerce jQuery Events & Guard against stale fragment restoration
      */
     if (window.jQuery) {
         window.jQuery(document.body).on(
@@ -319,5 +388,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 refreshHeaderCart();
             }
         );
+
+        // Guard against WooCommerce cart-fragments.js restoring stale fragments from sessionStorage on page load
+        window.jQuery(document.body).on('wc_fragments_loaded', function () {
+            try {
+                const cookieMatch = document.cookie.match(/(?:^|;\s*)woocommerce_items_in_cart=([0-9]+)/);
+                const cookieCount = cookieMatch ? parseInt(cookieMatch[1], 10) : 0;
+                const countEl = document.querySelector('a.cart-contents .count');
+                const isHeaderZero = countEl && (countEl.textContent.trim() === '0 items' || countEl.textContent.trim() === '0 item');
+
+                if (cookieCount === 0 && !isHeaderZero) {
+                    refreshHeaderCart();
+                }
+            } catch (e) { }
+        });
     }
 })();
