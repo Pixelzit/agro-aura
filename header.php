@@ -117,7 +117,10 @@ $avatar_url    = $current_user->exists() ? get_avatar_url( $current_user->ID, ar
 		<div id="agro-side-drawer" class="agro-side-drawer" aria-hidden="true">
 			<div class="drawer-header">
 				<div class="drawer-logo">
-					<span class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>">Agro Aura</a></span>
+					<span class="site-title">
+						<?php storefront_site_title_or_logo(); ?>
+						<!-- <a href="<?php //echo esc_url( home_url( '/' ) ); ?>"></a> -->
+					</span>
 				</div>
 				<button type="button" class="drawer-close" aria-label="<?php esc_attr_e( 'Close Menu', 'storefront-child' ); ?>">
 					<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

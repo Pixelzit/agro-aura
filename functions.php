@@ -37,9 +37,20 @@ function storefront_child_enqueue_styles() {
 	wp_enqueue_script(
 		'storefront-child-header',
 		get_stylesheet_directory_uri() . '/assets/js/header.js',
-		array(),
+		array( 'jquery' ),
 		$header_js_ver,
 		true
+	);
+
+	wp_localize_script(
+		'storefront-child-header',
+		'agroCartParams',
+		array(
+			'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
+			'wcAjaxUrl'      => class_exists( 'WC_AJAX' ) ? WC_AJAX::get_endpoint( '%%endpoint%%' ) : '/?wc-ajax=%%endpoint%%',
+			'cartUrl'        => function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : '',
+			'currencySymbol' => function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '₹',
+		)
 	);
 
 	if ( is_product() ) {

@@ -551,15 +551,15 @@
             display: inline-flex;
             align-items: baseline;
 
-            &::after {
-                content: '';
-                display: inline-block;
-                width: 6px;
-                height: 6px;
-                background-color: var(--accent-dot-color);
-                border-radius: 50%;
-                margin-left: 5px;
-            }
+            // &::after {
+            //     content: '';
+            //     display: inline-block;
+            //     width: 6px;
+            //     height: 6px;
+            //     background-color: var(--accent-dot-color);
+            //     border-radius: 50%;
+            //     margin-left: 5px;
+            // }
         }
 
         .drawer-close {
