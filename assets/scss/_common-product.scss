@@ -1,8 +1,33 @@
 @use "colors" as *;
 
-.woocommerce-message {
-    max-width: 1560px;
+.woocommerce-message,
+.woocommerce-error {
+    width: 100%;
+    max-width: 1600px;
     margin-inline: auto !important;
+    display: flow-root;
+
+    @media (max-width: 1600px) {
+        max-width: 1440px;
+        padding-inline: 40px;
+    }
+
+    @media (max-width: 767px) {
+        padding-inline: 12px;
+    }
+}
+
+.site-content>.woocommerce:has(.woocommerce-message),
+.site-content>.woocommerce:has(.woocommerce-error) {
+    padding-inline: 60px;
+
+    @media (max-width: 1600px) {
+        padding-inline: 40px;
+    }
+
+    @media (max-width: 767px) {
+        padding-inline: 12px;
+    }
 }
 
 // 1. Shared Product Badges & Tags

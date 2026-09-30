@@ -698,13 +698,14 @@ body.single-product {
             // Additional Information Tab Table
             &#tab-additional_information {
                 table.shop_attributes {
-                    width: 100% !important;
-                    border-collapse: separate !important;
-                    border-spacing: 0 !important;
-                    border: 1px solid #e5e7eb !important;
-                    border-radius: 12px !important;
-                    overflow: hidden !important;
-                    margin: 0 !important;
+                    width: 100%;
+                    max-width: 500px;
+                    border-collapse: separate;
+                    border-spacing: 0;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    margin: 0;
 
                     th,
                     td {
